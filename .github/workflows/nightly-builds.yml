@@ -1,0 +1,77 @@
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Runs at 2 AM UTC every day
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: supplement
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '14'
+
+    - name: Install server dependencies
+      run: |
+        cd server
+        npm install
+
+    - name: Configure MySQL
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mysql-client
+        mysql -h 127.0.0.1 -P 3306 -u root -proot testdb < server/schema.sql
+
+    - name: Install client dependencies
+      run: |
+        cd client
+        npm install
+
+    - name: Run server tests
+      run: |
+        cd server
+        npm test
+
+    - name: Build client
+      run: |
+        cd client
+        npm run build
+
+    - name: Archive Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: client/build/
+
+    - name: Notify via Email
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: Nightly Build ${{ github.run_number }} Status
+        body: Build completed
+        to: user@example.com
+        from: aj875063@gmail.com
