@@ -3,7 +3,7 @@ let sql=require("../config/database")();
 async function create_user_in_database(firstname,lastname,email,password,phone_number){
     try{
         console.log(firstname,lastname,email,password,phone_number);
-        let [result]=await sql.query(
+        await sql.query(
         `insert into user (first_name,last_name,email,password,phone_number) 
             values
             (?,?,?,?,?);
