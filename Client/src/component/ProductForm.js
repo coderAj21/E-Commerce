@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './ProductForm.css'
+import callingToaster from '../hooks/useToaster';
+import { toast } from 'react-toastify';
 
 function ProductForm(){
     const image_ref=useRef();
@@ -22,8 +24,11 @@ function ProductForm(){
     function addImageHandler(event){
         event.preventDefault();
         let image_tag=image_ref.current;
-        if(!image_tag.value)return;
+        if(!image_tag.value){
+            return toast.error("Please Select the Images!!!!!",{position:'top-center',autoClose:3000});
+        }
         setImageArray([...img_arr,image_tag.files[0]]);
+        console.log(image_tag.files[0]);
         image_tag.value="";
     }
 
@@ -35,32 +40,44 @@ function ProductForm(){
         );
     }
     async function submitHandler(event){
-        event.preventDefault();
-        let data=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/create_product`,{
-            method:"POST",
-            body:JSON.stringify(formData),
-            headers:{'Content-Type':'application/json'}
-        });
-        let response=await data.json();
-        console.log(response);
-        if(!response.success)return;
-        let image_from=new FormData();
-        img_arr.map((val,idx)=>(
-            image_from.append(`file_${idx}`,val)
-        ))
-        image_from.append("product_id",response.data);
-        let image=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/add_product_images`,{
-            method:"POST",
-            body:image_from,
-        });
-        let new_response=await image.json();
-        console.log(new_response);
-        form.current.reset();
-        setImageArray([]);
-        setFromData({
-            product_name:"",description:"",category_name:"",original_price:"",final_price:"",discount:"",
-            quantity:"",
-        })
+        try{
+            event.preventDefault();
+            let data=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/create_product`,{
+                method:"POST",
+                body:JSON.stringify(formData),
+                headers:{'Content-Type':'application/json'}
+            });
+
+            let response=await data.json();
+            if(!response.success){
+                return toast.error(response.message,{position:'top-center',autoClose:3000});
+                
+            }
+            let image_from=new FormData();
+            if(img_arr.length<1){
+                return toast.error("Please Add the Images...",{position:'top-center',autoClose:3000});
+            }
+            img_arr.map((val,idx)=>(
+                image_from.append(`file_${idx}`,val)
+            ))
+            image_from.append("product_id",response.data);
+            let image=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/add_product_images`,{
+                method:"POST",
+                body:image_from,
+            });
+            let new_response=await image.json();
+            if(new_response.success){
+                callingToaster(new_response);
+            }
+            form.current.reset();
+            setImageArray([]);
+            setFromData({
+                product_name:"",description:"",category_name:"",original_price:"",final_price:"",discount:"",
+                quantity:"",
+            })
+        }catch(error){
+            callingToaster(null,error);
+        }
     }
     async function fetchApi() {
         let data=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/get_category`);

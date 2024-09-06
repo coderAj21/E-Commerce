@@ -46,7 +46,6 @@ create table products(
     updated_at timestamp,
     foreign key (category_id) references category(category_id)
 );
-
 create table products_details(
     products_details_id int unsigned primary key auto_increment,
     product_id int unsigned,
@@ -58,7 +57,6 @@ create table products_details(
     updated_at timestamp,
     foreign key (product_id) references products(product_id)
 );
-
 create table products_images(
 	product_image_id int unsigned primary key auto_increment,
     product_id int unsigned,

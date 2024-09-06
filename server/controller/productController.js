@@ -89,13 +89,16 @@ exports.addProductImages=async(req,res)=>{
 async function get_all_images(product_id,image) {
     try{
         if (!image){
-        return {
-            success:false,
-            message:"File not Found"
+            return {
+                success:false,
+                message:"File not Found"
+            }
         }
-        }
+        console.log(image);
         let name=Date.now();
-        let filepath = path.join(__dirname, '..', 'assets', 'product', `${name}.${image.name.split(".")[1]}`);
+        let type=image.mimetype.split('/')[1];
+        console.log(type);
+        let filepath = path.join(__dirname, '..', 'assets', 'product', `${name}.${type}`);
         image.mv(filepath,(error)=>{
             if(error)console.log(error);
         });
