@@ -1,6 +1,8 @@
 const path = require('path');
 const {get_category_by_name_from_database}=require("../models/categoryLogic");
-const {create_product_in_database, create_product_details_in_database,add_product_image_in_database}=require( "../models/ProductLogic");
+const {create_product_in_database, create_product_details_in_database,
+      add_product_image_in_database, get_all_products_from_database,get_all_images_from_database
+}=require( "../models/ProductLogic");
 
 exports.createProduct=async (req,res)=>{
     try{
@@ -64,7 +66,7 @@ exports.addProductImages=async(req,res)=>{
     try{
         let {product_id}=req.body;
         for (let obj in req.files){
-            let response=await get_all_images(product_id,req.files[obj]);
+            let response=await submit_all_images(product_id,req.files[obj]);
             if (!response.success){
                 return res.status(200).json({
                     success:false,
@@ -86,7 +88,34 @@ exports.addProductImages=async(req,res)=>{
     }
 }
 
-async function get_all_images(product_id,image) {
+exports.get_all_products=async(req,res)=>{
+    try{
+        let response=await get_all_products_from_database();
+        if (response.success){
+            for (let val of response.data){
+                let image_response=await get_all_images_from_database(val.product_id);
+                if(image_response)val.images=image_response.data;
+            }
+            return res.status(200).json({
+                success:true,
+                data:response.data,
+                message:"Data is successfully Fetched..."
+            })
+        }
+        return res.status(200).json({
+            success:false,
+            message:"Products not found...",
+        })
+    }catch(error){
+        return res.status(400).json({
+            success:false,
+            message:"Error occured while getting the products",
+            error:error.message
+        })
+    }
+}
+
+async function submit_all_images(product_id,image) {
     try{
         if (!image){
             return {
@@ -102,6 +131,7 @@ async function get_all_images(product_id,image) {
         image.mv(filepath,(error)=>{
             if(error)console.log(error);
         });
+        name=name+'.'+type;
         let image_response=await add_product_image_in_database(product_id,name);
         return {
             success:true,
@@ -115,3 +145,4 @@ async function get_all_images(product_id,image) {
         }
     }
 }
+
