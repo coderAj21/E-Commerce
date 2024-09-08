@@ -9,7 +9,7 @@ function ProductForm(){
     let [img_arr,setImageArray]=useState([]);
     const [formData,setFromData]=useState({
         product_name:"",description:"",category_name:"",original_price:"",final_price:"",discount:"",
-        quantity:"",
+        quantity:"",brand:"",flavour:"",weight:"",
     })
     let form=useRef(null);
     function changeHanlder(event){
@@ -41,6 +41,7 @@ function ProductForm(){
     }
     async function submitHandler(event){
         try{
+            console.log(formData);
             event.preventDefault();
             let data=await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/create_product`,{
                 method:"POST",
@@ -73,7 +74,7 @@ function ProductForm(){
             setImageArray([]);
             setFromData({
                 product_name:"",description:"",category_name:"",original_price:"",final_price:"",discount:"",
-                quantity:"",
+                quantity:"",brand:"",flavour:"",weight:"",
             })
         }catch(error){
             callingToaster(null,error);
@@ -86,8 +87,7 @@ function ProductForm(){
     }
     useEffect(()=>{
         fetchApi();
-    },[])
-    // console.log(formData);
+    },[]);
     return(
         <div className="w-full h-full">
             <form ref={form} className='w-3/5 max-md:w-full h-full flex flex-col gap-y-5 mx-auto shadow-lg '>
@@ -134,6 +134,21 @@ function ProductForm(){
                     <div className="relative h-10 w-1/2 mx-2">
                         <input onChange={changeHanlder} type="number" name="quantity" id="quantity"  className='input-field'required placeholder=" " />
                         <label className='input-label'>Quantity </label>
+                    </div>
+                </div>
+                {/* brand flavour weight */}
+                <div className='flex'>
+                    <div className="relative h-10 w-1/2 mx-2">
+                        <input onChange={changeHanlder} type="text" name="brand" id="brand"   className='input-field'required placeholder=" " />
+                        <label className='input-label'>Brand Name </label>
+                    </div>
+                    <div className="relative h-10 w-1/2 mx-2">
+                        <input onChange={changeHanlder} type="text" name="flavour" id="flavour"  className='input-field'required placeholder=" " />
+                        <label className='input-label'>Flavour </label>
+                    </div>
+                    <div className="relative h-10 w-1/2 mx-2">
+                        <input onChange={changeHanlder} type="number" name="weight" id="weight"  className='input-field'required placeholder=" " />
+                        <label className='input-label'>Weight in Kgs </label>
                     </div>
                 </div>
                 {/* Add Images Div */}

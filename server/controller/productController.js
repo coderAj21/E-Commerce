@@ -7,7 +7,7 @@ const {create_product_in_database, create_product_details_in_database,
 exports.createProduct=async (req,res)=>{
     try{
         let{product_name,description,category_name}=req.body;
-        let {original_price, final_price,discount,quantity}=req.body;
+        let {original_price, final_price,discount,quantity,brand,flavour,weight}=req.body;
 
         if(!product_name || !description || !category_name){
             return res.status(200).json({
@@ -15,7 +15,7 @@ exports.createProduct=async (req,res)=>{
                 message:"All Fields Required..."
             })
         }
-        if(!original_price || !final_price || !discount ||!quantity){
+        if(!original_price || !final_price || !discount ||!quantity ||!brand ||!flavour || !weight){
             return res.status(200).json({
                 success:false,
                 message:"All Fields Required",
@@ -40,7 +40,8 @@ exports.createProduct=async (req,res)=>{
         let product_response=await create_product_in_database(product_name,description,category_id);
         let product_id=product_response.data.insertId;
         // add the data in product details
-        let product_details_response=await create_product_details_in_database(product_id,original_price,final_price,discount,quantity);
+        let product_details_response=await create_product_details_in_database(product_id,original_price,final_price,
+                                                                            discount,quantity,brand,flavour,weight);
         if (!product_details_response.success){
             return res.status(200).json({
                 success:false,
@@ -123,10 +124,10 @@ async function submit_all_images(product_id,image) {
                 message:"File not Found"
             }
         }
-        console.log(image);
+        // console.log(image);
         let name=Date.now();
         let type=image.mimetype.split('/')[1];
-        console.log(type);
+        // console.log(type);
         let filepath = path.join(__dirname, '..', 'assets', 'product', `${name}.${type}`);
         image.mv(filepath,(error)=>{
             if(error)console.log(error);

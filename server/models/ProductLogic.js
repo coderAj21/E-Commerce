@@ -20,13 +20,13 @@ async function create_product_in_database(product_name,description,category_id){
         }
     }
 }
-async function create_product_details_in_database(product_id,original_price,final_price,discount,quantity){
+async function create_product_details_in_database(product_id,original_price,final_price,discount,quantity,brand,flavour,weight){
     try{
         let [result]=await sql.query(
-            ` insert into products_details (product_id,original_price,final_price,discount,quantity)
-              values(?,?,?,?,?)  
+            ` insert into products_details (product_id,original_price,final_price,discount,quantity,brand,flavour,weight)
+              values(?,?,?,?,?,?,?,?)  
             `
-        ,[product_id,original_price,final_price,discount,quantity]);
+        ,[product_id,original_price,final_price,discount,quantity,brand,flavour,weight]);
         return {
             success:true,
             message:"Product details are inserted successfully",
