@@ -6,7 +6,7 @@ const { createProduct, addProductImages, get_all_products } = require("../contro
 
 // authentication
 router.post("/login",login);
-router.post("/signup",signup);
+router.post("/signin",signup);
 
 
 // products

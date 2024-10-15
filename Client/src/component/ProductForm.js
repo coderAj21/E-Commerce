@@ -48,8 +48,8 @@ function ProductForm(){
                 body:JSON.stringify(formData),
                 headers:{'Content-Type':'application/json'}
             });
-
             let response=await data.json();
+            console.log(response);
             if(!response.success){
                 return toast.error(response.message,{position:'top-center',autoClose:3000});
                 
@@ -88,9 +88,10 @@ function ProductForm(){
     useEffect(()=>{
         fetchApi();
     },[]);
+    // console.log(formData);
     return(
-        <div className="w-full h-full">
-            <form ref={form} className='w-3/5 max-md:w-full h-full flex flex-col gap-y-5 mx-auto shadow-lg '>
+        <div className="w-full h-full my-4">
+            <form ref={form} className='w-3/5 max-md:w-full h-full flex flex-col gap-y-5 mx-auto shadow-product '>
                 <h1 className='text-center text-2xl font-semibold my-2 font-sans '>Product Form</h1>
                 <div className='flex'>
                     <div className="relative h-10 w-1/2 mx-2">
@@ -102,7 +103,7 @@ function ProductForm(){
                         onChange={changeHanlder}>
                             <option>Choose the Category</option>
                             {
-                                category.map((ele,index)=>{
+                                category?.map((ele,index)=>{
                                     return <option key={"cat-"+index} className='input-field-option' value={ele.category_name}
                                            >{ele.category_name}</option>
                                 })
@@ -147,7 +148,7 @@ function ProductForm(){
                         <label className='input-label'>Flavour </label>
                     </div>
                     <div className="relative h-10 w-1/2 mx-2">
-                        <input onChange={changeHanlder} type="number" name="weight" id="weight"  className='input-field'required placeholder=" " />
+                        <input onChange={changeHanlder} type="number" step="0.01" name="weight" id="weight"  className='input-field'required placeholder=" " />
                         <label className='input-label'>Weight in Kgs </label>
                     </div>
                 </div>

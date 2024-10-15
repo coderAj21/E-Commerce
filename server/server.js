@@ -5,6 +5,7 @@ const path = require("path");
 require("dotenv").config();
 const router = require("./routes/routes");
 const express_fileupload=require("express-fileupload");
+const cookieParser=require("cookie-parser");
 const PORT=process.env.PORT;
 
 
@@ -14,6 +15,7 @@ app.use(cors({
 // middleware
 app.use(express.json());
 
+app.use(cookieParser());
 // file uplodaer middleware
 app.use(express_fileupload());
 
@@ -30,5 +32,3 @@ app.get("/",(req,res)=>{
 app.listen(PORT,()=>{
     console.log(`Server is running on port ${PORT}`);
 });
-
-

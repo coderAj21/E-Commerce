@@ -1,7 +1,9 @@
 const path = require('path');
 const {get_category_by_name_from_database}=require("../models/categoryLogic");
 const {create_product_in_database, create_product_details_in_database,
-      add_product_image_in_database, get_all_products_from_database,get_all_images_from_database
+      add_product_image_in_database, get_all_products_from_database,get_all_images_from_database,
+      add_product_weight_in_database,
+      add_product_flavour_in_database
 }=require( "../models/ProductLogic");
 
 exports.createProduct=async (req,res)=>{
@@ -37,12 +39,29 @@ exports.createProduct=async (req,res)=>{
         }
         let category_id=category_resposnse.data[0].category_id;
         
-        let product_response=await create_product_in_database(product_name,description,category_id);
+        let product_response=await create_product_in_database(product_name,description,category_id,brand);
         let product_id=product_response.data.insertId;
         // add the data in product details
         let product_details_response=await create_product_details_in_database(product_id,original_price,final_price,
-                                                                            discount,quantity,brand,flavour,weight);
+                                                                            discount,quantity);
         if (!product_details_response.success){
+            return res.status(200).json({
+                success:false,
+                message:product_details_response.message,
+                error:product_details_response.error
+            })
+        }
+        let product_weight_response=await add_product_weight_in_database(product_id,weight);
+        if (!product_weight_response.success){
+            return res.status(200).json({
+                success:false,
+                message:product_details_response.message,
+                error:product_details_response.error
+            })
+        }
+        let product_flavour_response=await add_product_flavour_in_database(product_id,flavour);
+        
+        if (!product_flavour_response.success){
             return res.status(200).json({
                 success:false,
                 message:product_details_response.message,

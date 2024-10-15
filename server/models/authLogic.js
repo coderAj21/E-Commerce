@@ -1,14 +1,13 @@
 let sql=require("../config/database")();
 
-async function create_user_in_database(firstname,lastname,email,password,phone_number){
+async function create_user_in_database(firstname,lastname,email,password){
     try{
-        console.log(firstname,lastname,email,password,phone_number);
         await sql.query(
-        `insert into user (first_name,last_name,email,password,phone_number) 
+        `insert into user (first_name,last_name,email,password) 
             values
-            (?,?,?,?,?);
+            (?,?,?,?);
             `
-        ,[firstname,lastname,email,password,phone_number]);
+        ,[firstname,lastname,email,password]);
         return{
             success:true,
         }
@@ -27,7 +26,6 @@ async function find_user_from_database(email){
         let [result]=await sql.query(
             `select email,password from user where email=?`
         ,[email]);
-        console.log(result);
         return {
             success:true,
             data:result
@@ -39,8 +37,21 @@ async function find_user_from_database(email){
         }
     }
 }
+async function reset_password_of_the_user_in_database(email,password){
+    try{
+        let [result]=await sql.query(
+            `update user set password=? where email=?`
+        ,[password,email]);
+        return {
+            success:true
+        }
+    }catch(error){
+        return{
+            success:false,
+        }
+    }
+}
 
 
 
-
-module.exports={create_user_in_database,find_user_from_database};
+module.exports={create_user_in_database,find_user_from_database,reset_password_of_the_user_in_database};

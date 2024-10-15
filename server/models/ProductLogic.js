@@ -1,12 +1,12 @@
 let sql=require("../config/database")();
 
 
-async function create_product_in_database(product_name,description,category_id){
+async function create_product_in_database(product_name,description,category_id,brand){
     try{
         let [result]=await sql.query(
-            `insert into products (product_name,description,category_id)
-            values (?,?,?)`   
-        ,[product_name,description,category_id]);
+            `insert into products (product_name,description,category_id,brand_name,is_avaialble)
+            values (?,?,?,?,?)`   
+        ,[product_name,description,category_id,brand,1]);
         return{
             success:true,
             message:"Product is created",
@@ -16,17 +16,17 @@ async function create_product_in_database(product_name,description,category_id){
         return {
             success:false,
             message:"Error in creating the product",
-            error:error.sqlMessage
+            error:error
         }
     }
 }
-async function create_product_details_in_database(product_id,original_price,final_price,discount,quantity,brand,flavour,weight){
+async function create_product_details_in_database(product_id,original_price,final_price,discount,quantity){
     try{
         let [result]=await sql.query(
-            ` insert into products_details (product_id,original_price,final_price,discount,quantity,brand,flavour,weight)
-              values(?,?,?,?,?,?,?,?)  
+            ` insert into products_details (product_id,original_price,final_price,discount,quantity)
+              values(?,?,?,?,?)  
             `
-        ,[product_id,original_price,final_price,discount,quantity,brand,flavour,weight]);
+        ,[product_id,original_price,final_price,discount,quantity]);
         return {
             success:true,
             message:"Product details are inserted successfully",
@@ -61,11 +61,50 @@ async function add_product_image_in_database(product_id,name){
         }
     }
 }
+async function add_product_flavour_in_database(product_id,flavour){
+    try{
+        let [result]=await sql.query(
+            `insert into products_flavours(product_id,value)
+            values(?,?);`
+        ,[product_id,flavour]);
+        return {
+            success:true,
+            message:"Product flavour add Successfully..."
+        }
+    }catch(error){
+        return {
+            success:false,
+            message:"Error in adding the product flavour..",
+            error:error.message
+        }
+    }
+}
+
+async function add_product_weight_in_database(product_id,weight) {
+    try{
+        let [result]=await sql.query(
+            `insert into products_weight(product_id,value)
+                values(?,?);
+            `
+        ,[product_id,weight]);
+        return {
+            success:true,
+            message:"Product weight Add Successfully..."
+        }
+    }catch(error){
+        return {
+            success:false,
+            message:"Error in adding the product weight...",
+            error:error.message
+        }
+    }
+    
+}
 
 async function get_all_products_from_database() {
     try{
         let [result]=await sql.query(
-        `select p.product_id,p.product_name,p.description,p.category_id,pd.original_price,pd.final_price,pd.quantity from products as p
+        `select p.product_id,p.product_name,p.description,p.category_id,pd.original_price,pd.final_price,pd.quantity,pd.discount from products as p
             inner join 
         products_details as pd on p.product_id=pd.product_id order by p.product_id asc;`
         );
@@ -115,5 +154,7 @@ module.exports= {
     create_product_details_in_database,
     add_product_image_in_database,
     get_all_products_from_database,
-    get_all_images_from_database
+    get_all_images_from_database,
+    add_product_weight_in_database,
+    add_product_flavour_in_database
 };
