@@ -11,7 +11,7 @@ exports.auth=async (req,res,next)=>{
                 message:"Session timeout..."
             })
         }
-        let payload=await jwt.verify(token,process.env.JWT_SECRET);
+        let payload=jwt.verify(token,process.env.JWT_SECRET);
         req.body.email=payload.email;
         next();
     }catch(error){

@@ -14,6 +14,7 @@ import { IoHelpCircleOutline } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineAddIcCall } from "react-icons/md";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 function Header(){
@@ -21,9 +22,10 @@ function Header(){
 
     function searchHandler(){
         console.log(search_input.current.value);
-
     }
-
+    let cart_total=useSelector((store)=>store?.cart?.total);
+    let wishlist_total=useSelector((store)=>store?.wishlist.total);
+    
     return (
         <div className="relative w-full h-fit border">
             {/* wlecome bar */}
@@ -53,9 +55,22 @@ function Header(){
                         cursor-pointer"/>
                     </div>
                     <div className=" px-4 flex text-2xl gap-x-6 cursor-pointer items-center">
-                        <IoCart/>
-                        <FaHeart/>
-                        <IoPerson/>
+                        <div className="relative">
+                            <NavLink to={"/cart"} className="text-3xl" ><IoCart/></NavLink>
+                            <p className="absolute w-4 aspect-square rounded-full text-center text-sm
+                                            font-bold -top-2 right-0 bg-yellow-300">
+                                {cart_total}
+                            </p>
+                        </div>
+                        <div className="relative">
+                            <NavLink to={"/wishlist"} className="text-3xl" ><FaHeart/></NavLink>
+                            <p className="absolute w-4 aspect-square rounded-full text-center text-sm text-white
+                                            font-bold -top-2 right-0 bg-red-600">
+                                {wishlist_total}
+                            </p>
+                        </div>
+                        
+                        <NavLink to={"/user/login"}><IoPerson/></NavLink>
                     </div>
 
                 </div>

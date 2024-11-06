@@ -51,7 +51,61 @@ async function reset_password_of_the_user_in_database(email,password){
         }
     }
 }
+async function verify_user_from_database_with_otp(email,otp){
+    try{
+        let [result]=await sql.query(
+            `select otp from user where email=?`
+        ,[email]);
+        if(result[0].otp===otp){
+            return {
+                success:true,
+            }
+        }
+        return {
+            success:false,
+        }
+    }catch(error){
+        return{
+            success:false,
+            error:error.message
+        }
 
+    }
+}
+async function set_otp_in_database(email,otp){
+    try{
+        let [result]=await sql.query(
+            `update user set otp=? where email=?;`
+        ,[otp,email])
+        return {
+            success:true,
+        }
+    }catch(error){
+        return{
+            success:false,
+            error:error.message
+        }
 
+    }
+}
+async function reset_password_of_the_user_in_database(email,hashedpass){
+    try{
+        let [result]=await sql.query(
+            `update user set password=? where email=?`
+        ,[hashedpass,email]);
+        console.log(result);
+        return {
+            success:true,
+        }
+    }catch(error){
+        return {
+            success:false,
+            error:error.message
+        }
+    }
+}
 
-module.exports={create_user_in_database,find_user_from_database,reset_password_of_the_user_in_database};
+module.exports={create_user_in_database,find_user_from_database,
+                reset_password_of_the_user_in_database,
+                set_otp_in_database,verify_user_from_database_with_otp,
+                reset_password_of_the_user_in_database};

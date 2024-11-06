@@ -1,6 +1,8 @@
 let bcrypt=require("bcrypt");
-let {create_user_in_database, find_user_from_database}=require("../models/authLogic");
+let {create_user_in_database, find_user_from_database,
+    verify_user_from_database_with_otp,reset_password_of_the_user_in_database}=require("../models/authLogic");
 let jwt=require("jsonwebtoken");
+const {send_otp_to_mail}=require("../config/sendOtpToMail");
 
 
 exports.login=async (req,res)=>{
@@ -95,6 +97,7 @@ exports.signup=async (req,res)=>{
 exports.forgetPassword=async (req,res)=>{
     try{
         let {email}=req.body;
+        // console.log(email);
         if (!email){
             return res.status(200).json({
                 success:false,
@@ -102,14 +105,13 @@ exports.forgetPassword=async (req,res)=>{
             })
         }
         let find_user=await find_user_from_database(email);
-        
         if(find_user.data.length===0){
             return res.status(404).json({
                 success:false,
                 message:"User not existed...."
             })
         }
-        let otp_response=await send_otp(email);
+        let otp_response=await send_otp_to_mail(email);
         if (otp_response.success){
             return res.status(201).json({
                 success:true,
@@ -134,13 +136,17 @@ exports.otpVerification=async(req,res)=>{
                 message:"All field required.."
             })
         }
-        let result=await verify_user_from_database_with_otp(email,otp);
+        let result=await verify_user_from_database_with_otp(email,parseInt(otp));
         if(result.success){
             return res.status(201).json({
                 success:true,
                 message:"Validation Confirm..."
             })
         }
+        return res.status(200).json({
+            success:false,
+            message:"OTP is not valid.."
+        })
     }catch(error){
         return res.status(500).json({
             success:false,
@@ -178,12 +184,13 @@ exports.resetPassword=async(req,res)=>{
                 message:"Please dont use your old password..."
             })
         }
-        let hashedpass=bcrypt.hash(password,10);
+        let hashedpass=await bcrypt.hash(password,10);
         let update_user=await reset_password_of_the_user_in_database(email,hashedpass);
-        if (!update_user){
+        if (!update_user.success){
             return res.status(404).json({
                 success:false,
                 message:"some error occured during reseting the password",
+                error:update_user.error
             })
         }
         return res.status(200).json({

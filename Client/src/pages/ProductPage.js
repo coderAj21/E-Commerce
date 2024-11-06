@@ -1,36 +1,28 @@
-import { useState } from "react";
+import {useState } from "react";
 import Slider from "react-slick";
-import { FaRegHeart } from "react-icons/fa";
-
-let data={
-      "product_id": 2,
-      "product_name": "Optimum Nutrition (ON) Gold Standard 100% Whey Protein Powder",
-      "description": "Optimum Nutrition (ON) Gold Standard 100% Whey Protein Powder",
-      "category_id": 1,
-      "original_price": 6999,
-      "final_price": 6000,
-      "quantity": 100,
-      "discount": 20,
-      "images": [
-        {
-          "value": "1728743837906.jpeg"
-        },
-        {
-          "value": "1728743837912.jpeg"
-        },
-        {
-          "value": "1728743837915.jpeg"
-        },
-        {
-          "value": "1728743837918.jpeg"
-        }
-      ]
-}
-
+import { IoCart } from "react-icons/io5";
+import {useDispatch, useSelector} from "react-redux"
+import {useParams } from "react-router-dom";
+import { addItemToCart } from "../redux/slices/cartSlice";
+import Spinner from "../component/Spinner";
+import { addItemToWishlist } from "../redux/slices/wishlistSlice";
 let url=process.env.REACT_APP_BACKEND_URL;
+
+function findProductById(arr,idx){
+    for (let item of arr){
+            if (item.product_id===idx){
+                return item;
+            }
+        }
+        return undefined;
+}
 
 
 function ProductPage(){
+    const {idx}=useParams();
+    let product=useSelector((store)=>store?.product?.data);
+    let dispatch=useDispatch();
+    let data=findProductById(product,parseInt(idx));
     var settings = {
         infinite: true,
         speed: 500,
@@ -44,8 +36,24 @@ function ProductPage(){
             setImageIndex(index);
         }
     };
-    let [imageIndex,setImageIndex]=useState(2);
-    let [productCount,setProductCount]=useState(0);
+    let [imageIndex,setImageIndex]=useState(1);
+    let [weight,setWeight]=useState("KG");
+    
+    function addToCart(){
+        let obj={...data,quantity:1};
+        dispatch(addItemToCart(obj));
+    }
+    function addToWishlist(){
+        let obj={...data};
+        dispatch(addItemToWishlist(obj));
+    }
+    if(!data){
+        return(
+            <div className="w-full min-h-screen flex items-center justify-center">
+                <Spinner/>
+            </div>
+        )
+    }
     return (
         <div className="w-full h-full my-4  flex flex-col">
             <div className="w-full flex flex-wrap">
@@ -75,34 +83,74 @@ function ProductPage(){
                 {/* product data div */}
                 <div className="w-1/2 flex flex-col border-2 my-4 p-4" >
                     <p className="text-2xl font-semibold">{data.product_name}</p>
-                    <p className="" >
-                        <span className="text-2xl font-semibold">By</span>
-                        <span className="text-yellow-600 text-lg font-semibold mx-2" >Brand Name</span>
+                    <p className="mt-2" >
+                        <span className="text-xl font-medium">By</span>
+                        <span className="text-yellow-600 text-xl font-semibold mx-2" >Brand Name</span>
                     </p>
-                    <div className="w-full flex flex-col my-4">
-                        <p>MRP :₹<span className="line-through">{data.original_price}</span></p>
-                        
-                        <span><FaRegHeart  className="text-2xl cursor-pointer"/></span>
-                    </div>
-                    <div className="flex">
-                        {/* product count */}
-                        <div className="flex">
-                            <span className="select-none cursor-pointer" onClick={()=>{
-                                if(productCount===0)return;
-                                setProductCount(productCount-1);
-                            }} >-</span>
-                            <span className="select-none">{productCount}</span>
-                            <span className="select-none cursor-pointer" onClick={()=>{
-                                if(productCount>=5)return;
-                                setProductCount(productCount+1);
-                            }}>+</span>
+                    {/* price  */}
+                    <div className="w-2/5 flex flex-col my-4 mt-10 justify-start">
+                        <div className="w-full flex flex-row items-center gap-x-5">
+                            <p className="text-3xl text-red-500">-{data.discount}%</p>
+                            <p className="pr-4 text-3xl">₹{data.final_price}</p>
                         </div>
-                        <button className="w-fit rounded-md bg-yellow-300 text-black font-semibold p-1 hover:bg-yellow-400 transition duration-150 ease-in
-              ">Add to Cart</button>
+                        <p className="my-2 text-sm text-zinc-500">
+                            M.R.P : 
+                            <span className="line-through pr-4">₹{data.original_price}</span>
+                            <span className="">Inclusive of all taxes</span>
+                        </p>
+                    </div>
+                    {/* Buttons  */}
+                    <div className="w-1/2 flex flex-row justify-between">
+                        <button onClick={addToWishlist}
+                            className="w-fit rounded-md bg-zinc-700 text-white font-semibold p-1 px-4
+                            hover:bg-zinc-900 transition duration-150 ease-in">
+                            Add to Wishlist
+                        </button>
+                        <button
+                            onClick={addToCart}
+                            className="w-fit flex items-center rounded-md bg-yellow-300 text-black font-semibold p-1 px-3
+                            hover:bg-yellow-400 transition duration-150 ease-in">
+                            <span className="text-2xl px-2"><IoCart/></span>
+                            <span>Add to Cart</span> 
+                        </button>
+                    </div>
+                    {/* weight and  flavour div */}
+                    <div className="w-full flex flex-col my-10">
+                        {/* weight  */}
+                        <div className="w-4/5 flex flex-col">
+                            <div className="w-1/2 flex flex-row gap-x-4 items-center">
+                                <p className="text-2xl font-semibold">Weight</p>
+                                <div className="text-lg">
+                                    <button
+                                        className={`border p-2 font-medium rounded-l-md ${weight==="KG"?"bg-yellow-300":""}`}
+                                        onClick={()=>setWeight("KG")}>KG</button>
+                                    <button 
+                                        className={`border p-2 font-medium rounded-r-md ${weight==="LB"?"bg-yellow-300":""} `}
+                                        onClick={()=>setWeight("LB")}>LB</button>
+                                </div>
+                            </div>
+                            <div className="flex flex-wrap gap-x-4 my-3 cursor-pointer">
+                                <p className="border-2 border-black w-[75px] text-center p-1 px-2">2.5 {weight}</p>
+                                <p className="border-2 border-black w-[75px] text-center p-1 px-2">5.0 {weight}</p>
+                                <p className="border-2 border-black w-[75px] text-center p-1 px-2">7.5 {weight}</p>
+                                <p className="border-2 border-black w-[75px] text-center p-1 px-2">10.0 {weight}</p>
+                            </div>
+                        </div>
+                        {/* Flavour */}
+                        <div className="w-4/5 flex flex-col my-6">
+                            <div className="w-1/2 flex flex-row gap-x-4 items-center">
+                                <p className="text-2xl font-semibold">Flavours</p>
+                            </div>
+                            <div className="w-full flex flex-wrap gap-3 my-3 cursor-pointer">
+                                <p className="border-2 border-black w-fit text-center p-1 px-2 rounded">Rich Chocolate</p>
+                                <p className="border-2 border-black w-fit text-center p-1 px-2 rounded">Blue Tokai Coffee</p>
+                                <p className="border-2 border-black w-fit text-center p-1 px-2 rounded">Butter Cookie</p>
+                                <p className="border-2 border-black w-fit text-center p-1 px-2 rounded">Kesar Kulfi</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            {/* Additional information */}
             <div>
 
             </div>

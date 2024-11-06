@@ -10,7 +10,6 @@ const  Footer=()=>{
                         <ul className="text-zinc-300 cursor-pointer">
                             <li>About Us</li>
                             <li>Contact Us</li>
-                            <li>Refer & Earn</li>
                             <li>Terms and Condition</li>    
                         </ul>
                     </div>
