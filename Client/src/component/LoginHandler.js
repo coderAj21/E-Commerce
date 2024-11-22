@@ -47,7 +47,7 @@ const LoginHandler = ({isLogin,setIsLogin}) => {
                 <label className='input-label'>Password</label>
             </div>
             <div className='relative w-10/12 mx-auto flex justify-end'>
-                <NavLink to={"/user/forget_password"}><p className="w-fit cursor-pointer">forget password?</p></NavLink>
+                <NavLink to={"/auth/forget_password"}><p className="w-fit cursor-pointer">forget password?</p></NavLink>
 
             </div>
 

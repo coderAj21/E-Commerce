@@ -15,6 +15,8 @@ import { IoIosArrowDown } from "react-icons/io";
 import { MdOutlineAddIcCall } from "react-icons/md";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Button, Dropdown } from "rizzui";
+import CategoryComponent from "../component/CategoryComponent";
 
 
 function Header(){
@@ -69,8 +71,16 @@ function Header(){
                                 {wishlist_total}
                             </p>
                         </div>
-                        
-                        <NavLink to={"/user/login"}><IoPerson/></NavLink>
+                        <Dropdown>
+                            <Dropdown.Trigger>
+                                <IoPerson />
+                            </Dropdown.Trigger>
+                            <Dropdown.Menu className="bg-white w-fit">
+                                <Dropdown.Item><NavLink to={"/auth/login"}>Login</NavLink></Dropdown.Item>
+                                <Dropdown.Item><NavLink to={"/auth/profile"}>My Profile</NavLink></Dropdown.Item>
+                            </Dropdown.Menu>
+                        </Dropdown>
+
                     </div>
 
                 </div>
@@ -80,8 +90,8 @@ function Header(){
                 <div className="container flex justify-between py-2">
                         <div className="w-full flex gap-x-8">
                             <div className="flex items-center gap-x-1 cursor-pointer">
-                                <p className="text-sm text-zinc-500 font-semibold">All Cateory</p>
-                                <IoIosArrowDown className="text-xl"/>
+                                <CategoryComponent/>                    
+                                
                             </div>
                             <div className="flex items-center gap-x-1 cursor-pointer">
                                 <IoLocationOutline className="text-xl"/>

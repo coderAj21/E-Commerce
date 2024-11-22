@@ -19,7 +19,7 @@ const ForgotPasswordHandler = ({}) => {
             let response=await data.json();
             if(response.success){
                 dispatch(setEmail(formdata.email));
-                navigate("/user/otp");
+                navigate("/auth/otp");
             }
         }catch(error){
             console.log(error);
@@ -44,7 +44,7 @@ const ForgotPasswordHandler = ({}) => {
                     <label className='input-label'>Email</label>
                 </div>
                 <p className="mx-8">Already have Account?
-                    <NavLink to={"/user/login"} ><span className='text-yellow-600 font-semibold cursor-pointer'> Log in </span></NavLink>
+                    <NavLink to={"/auth/login"} ><span className='text-yellow-600 font-semibold cursor-pointer'> Log in </span></NavLink>
                 </p>
                 <div className="relative h-9 w-10/12 mx-auto mb-2">
                     <button onClick={submitHandler}

@@ -15,6 +15,8 @@ import { getDataFromLocalStorage } from "../hooks/useLocalStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { setCartItem } from "../redux/slices/cartSlice";
 import { setWishlist } from "../redux/slices/wishlistSlice";
+import FilterPage from "./FilterPage";
+import Profile from "./user-profile/Profile";
 
 
 function Body(){
@@ -42,12 +44,14 @@ function Body(){
                     <Route path="/product/:idx" element={<ProductPage/>} ></Route>
                     <Route path="/cart" element={<Cart/>} ></Route>
                     <Route path="/wishlist" element={<Wishlist/>}></Route>
-                    <Route path="/user/*" element={<AuthPage/>}>
+                    <Route path="/auth/*" element={<AuthPage/>}>
                         <Route path="login" element={<Login/>}></Route>
                         <Route path="forget_password" element={<ForgotPasswordHandler/>} ></Route>
                         <Route path="otp" element={<OTPHandler/>} ></Route>
                         <Route path="reset_password" element={<ResetPasswordHandler/>}></Route>
+                        <Route path="profile" element={<Profile/>}></Route>
                     </Route>
+                    <Route path="/filter" element={<FilterPage/>}></Route>
                 </Routes>
             </div>
         </div>

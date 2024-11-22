@@ -11,7 +11,7 @@ const ResetPasswordHandler = () => {
     
     let user=useSelector((store)=>store.user);
     if(!user.email){
-        navigate("/user/forget_password");
+        navigate("/auth/forget_password");
         return;
     };
     
@@ -26,7 +26,7 @@ const ResetPasswordHandler = () => {
             })
             let response=await data.json();
             if(response.success){
-                navigate("/user/login");
+                navigate("/auth/login");
             }
         }catch(error){
             console.log(error);

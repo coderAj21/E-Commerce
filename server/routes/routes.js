@@ -4,6 +4,7 @@ const { login, signup, forgetPassword, otpVerification, resetPassword } = requir
 const {createCategory,getCategory}=require("../controller/categoryController");
 const { createProduct, addProductImages, get_all_products } = require("../controller/productController");
 const {auth}= require("../middleware/auth");
+const { getAllBrands } = require("../controller/brandController");
 
 // authentication
 router.post("/login",login);
@@ -22,6 +23,9 @@ router.get("/get_products",get_all_products);
 // catergory
 router.post("/create_category",createCategory);
 router.get("/get_category",getCategory);
+
+// brand
+router.get("/get_brand",getAllBrands);
 
 
 module.exports=router;

@@ -28,7 +28,7 @@ const OTPHandler = () => {
             })
             let response=await data.json();
             if(response.success){
-                navigate("/user/reset_password");
+                navigate("/auth/reset_password");
             }
         }catch(error){
             console.log(error);

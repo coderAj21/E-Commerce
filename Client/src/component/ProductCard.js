@@ -7,7 +7,8 @@ import { addItemToWishlist } from "../redux/slices/wishlistSlice";
 
 
 
-function ProductCard({product_id,images,product_name,final_price,original_price,discount,data}){
+function ProductCard({product_id,images,product_name,final_price,original_price,discount,data,width=""}){
+    
     let url=process.env.REACT_APP_BACKEND_URL;
     let [isVisibleWishlistButton,setIsVisibleWishlistButton]=useState(false);
     let dispatch=useDispatch();
@@ -21,7 +22,7 @@ function ProductCard({product_id,images,product_name,final_price,original_price,
       dispatch(addItemToWishlist(obj));
     }
     return (
-        <div className="flex flex-col w-[290px] shadow-product rounded-md">
+        <div className={`flex flex-col w-[${width?width:"290px"}] shadow-product rounded-md`}>
             <div  onMouseOver={()=>(setIsVisibleWishlistButton(true))}
                   onMouseLeave={()=>(setIsVisibleWishlistButton(false))}
                   className="flex h-7 items-center justify-end mr-2 mt-1">
@@ -34,7 +35,7 @@ function ProductCard({product_id,images,product_name,final_price,original_price,
                   <FaRegHeart  className="text-2xl cursor-pointer"/>
               </div>
             <NavLink  to={`/product/${product_id}`} target="_blank" >
-              <div className="w-[285px] h-[185px] object-contain">
+          <div className={` max-w-[${width ? width : "100%"}] h-[185px] p-2 object-contain`}>
                 <img className="w-full h-full" src={`${url}/${images[0].value}`} alt="product-image" ></img>
               </div>
               <div  className="w-full px-4 ">

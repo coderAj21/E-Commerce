@@ -81,6 +81,7 @@ create table products_images(
 create table products_weight(
     product_weight_id int unsigned primary key auto_increment,
     product_id int unsigned,
+    weight_name varchar(255) not null,
     value float unsigned not null default 0,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
@@ -131,4 +132,10 @@ create table payment_details(
         updated_at timestamp,
         foreign key (order_id) references order_details(order_id),
         foreign key (user_id) references user (user_id)
+);
+
+create table brand(
+    brand_id  int unsigned primary key auto_increment,
+    brand_name varchar(255) not null,
+    created_at timestamp default current_timestamp
 );

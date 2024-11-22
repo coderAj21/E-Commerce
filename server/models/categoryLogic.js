@@ -43,7 +43,7 @@ async function insert_category_in_database(name){
 async function get_category_from_database(){
     try{
         let [result]=await sql.query(
-            `select category_name from category`
+            `select category_name,category_id from category`
         )
         if(result.length>0){
             return {

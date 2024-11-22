@@ -6,7 +6,7 @@ const {create_product_in_database, create_product_details_in_database,
       add_product_flavour_in_database
 }=require( "../models/ProductLogic");
 
-exports.createProduct=async (req,res)=>{
+exports.createProduct=async (req,res)=>{ 
     try{
         let{product_name,description,category_name}=req.body;
         let {original_price, final_price,discount,quantity,brand,flavour,weight}=req.body;
