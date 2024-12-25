@@ -1,5 +1,8 @@
 import React,{useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { routes } from '../config/routes';
+import APISERVICES from '../config/api-services';
+import toast from 'react-hot-toast';
 
 const SigninHandler = ({isLogin,setIsLogin}) => {
     let navigate=useNavigate();
@@ -13,19 +16,13 @@ const SigninHandler = ({isLogin,setIsLogin}) => {
     async function submitHandler(event) {
         try{
             event.preventDefault();
-            let data=await fetch('http://localhost:5051/api/v1/signin',{
-                method:"POST",
-                credentials:"include",
-                body:JSON.stringify(formdata),
-                headers:{'Content-Type':'application/json'}
-            });
-            let response=await data.json();
+            let response=await APISERVICES.auth.signin.post(formdata);
             if(response.success){
-                navigate("/");
+                navigate(routes.home.listing);
             }
             console.log(response);
         }catch(error){
-
+            return toast.error(error.message);
         }
     };
     function changeHanlder(event) {

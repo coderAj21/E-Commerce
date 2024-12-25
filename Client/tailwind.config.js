@@ -17,7 +17,7 @@ module.exports = {
         /*
         * body text color
         */
-        foreground: colors.gray[600],
+        // foreground: colors.gray[600],
 
         /*
         * border, default flat bg color for input components, tab & dropdown hover color

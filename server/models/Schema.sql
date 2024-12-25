@@ -13,8 +13,7 @@ create table address(
     address_id int unsigned unique not null auto_increment,
     user_id int unsigned,
     address_type enum ("office","home") not null default "home",
-    address_line_1 varchar(255) not null,
-    address_line_2 varchar(255) not null,
+    address_line_2 text not null,
     landmark varchar(255) not null,
     country varchar(100) not null,
     city varchar(200) not null,
@@ -81,20 +80,21 @@ create table products_images(
 create table products_weight(
     product_weight_id int unsigned primary key auto_increment,
     product_id int unsigned,
-    weight_name varchar(255) not null,
-    value float unsigned not null default 0,
+    weight_id int unsigned,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
     foreign key (product_id) references products(product_id)
+    foreign key (weight_id) references weights(weight_id)
 );
 
 create table products_flavours(
     product_flavour_id int unsigned primary key auto_increment,
     product_id int unsigned,
-    value text not null,
+    flavour_id int unsigned,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
     foreign key (product_id) references products(product_id)
+    foreign key (flavour_id) references flavours(flavour_id)
 );
 
 create table order_details(
@@ -103,6 +103,7 @@ create table order_details(
     total_amount int unsigned not null default 0,
     order_status enum ("Pending","Processing","Shipped","Delivered") not null default "Pending",
     payment_status enum ("Pending","Completed","Failed") not null default "Pending",
+    billing_address_id int unsigned,
     shipping_address_id int unsigned,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
@@ -116,9 +117,14 @@ create table order_items(
     quantity int unsigned,
     price int unsigned,
     total_price int unsigned,
+    flavour_id int unsigned,
+    weight_id int unsigned,
     created_at timestamp default current_timestamp,
     foreign key (order_id) references order_details(order_id),
-    foreign key (product_id) references products (product_id)
+    foreign key (product_id) references products (product_id),
+    foreign key (flavour_id) references products_flavours(product_flavour_id),
+    foreign key (weight_id) references products_weight(product_weight_id),
+
 );
 create table payment_details(
 		payment_id int unsigned primary key auto_increment,
@@ -139,3 +145,26 @@ create table brand(
     brand_name varchar(255) not null,
     created_at timestamp default current_timestamp
 );
+
+create table flavours(
+    flavour_id int unsigned primary key auto_increment,
+    value text not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp,
+);
+
+create table weights(
+    weight_id int unsigned primary key auto_increment,
+    value float unsigned not null default 0,
+    unit_id int unsigned,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp,
+    foreign key (unit_id) references unit(unit_id)
+);
+
+create table unit(
+    unit_id int unsigned primary key auto_increment,
+    value varchar(200) not null,
+    created_at timestamp default timestamp,
+    updated_at timestamp,
+)

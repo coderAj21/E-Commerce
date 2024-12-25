@@ -26,6 +26,7 @@ const FilterPage = () => {
     })
     
     const [value,setValue]=useState([]);
+    const [selectData,setSelectData]=useState(null);
     const [state, setState] =useState({
       min: 2000,
       max: 8000,
@@ -38,21 +39,20 @@ const FilterPage = () => {
     });
   }
   let data = useSelector((store) => store?.product?.data);
-  let [product_arr, setProductArray] = useState([]);
   
+  let [product_arr, setProductArray] = useState([]);
   useEffect(() => {
     let obj=getQueryParameter(searchparams);
     console.log(obj);
     if(obj.value){
-      let data_arr=data.filter((val)=>val[obj.key]===obj.value);
-      console.log(data_arr);
+      let data_arr=data.filter((val)=>val[obj.key].toLowerCase()==obj.value);
       setProductArray(data_arr);
-
     }else{
       setProductArray(data);
     }
   }, [data])
-  
+  console.log(data);
+
   return (
     <div className="w-full flex min-h-screen  ">
       {/* all drop downs */}
@@ -171,7 +171,7 @@ const FilterPage = () => {
           <Accordion.Header>
             {({ open }) => (
               <div className="w-full mx-auto p-1 px-4 flex items-center justify-between rounded-lg hover:bg-slate-50">
-                <p className="text-lg font-semibold">Choose Brands</p>
+                <p className="text-lg font-semibold">Brands</p>
                 <span>
                   <IoIosArrowDown
                     className={cn(
@@ -302,10 +302,10 @@ const FilterPage = () => {
               className={"w-fit"}
               dropdownClassName="bg-white w-fit"
               options={options}
-              value={value}
-              onChange={(params) => {
-                setValue(params);
-                setProductArray(sortTheArray(params.value, [...data]));
+              value={selectData}
+              onChange={(field) => {
+                setSelectData(field);
+                setProductArray(sortTheArray(field.value, [...data]));
               }}
               placeholder="Most Popular"
             />
@@ -363,7 +363,6 @@ function sortTheArray(type,arr){
       })
     }
   }
-  console.log(ans);
   return ans;
 }
 
@@ -381,28 +380,36 @@ function filterTheDataOnInputBases(input,arr){
   })
 }
 
-function getQueryParameter(searchparams){
-  if (searchparams.get("category_name")!=="null"){
+function getQueryParameter(searchparams) {
+  const category = searchparams.get("category_name");
+  const brand = searchparams.get("brand_name");
+  const subCategory = searchparams.get("subCategory");
+  const sort = searchparams.get("sort");
+
+  if (category && category !== "null") {
     return {
-      key:"category_name",
-      value: searchparams.get("category_name")
-    }
-  }
-  else if (searchparams.get("brand_name")!=="null"){
+      key: "category_name",
+      value: category
+    };
+  } else if (brand && brand !== "null") {
     return {
       key: "brand_name",
-      value: searchparams.get("brand_name")
-    }
+      value: brand
+    };
   }
-  else if (searchparams.get("category_name")!=="null"){
-
-  }
-  else if (searchparams.get("category_name")!=="null"){
-
-  }
+  //  else if (subCategory && subCategory !== "null") {
+  //   return {
+  //     key: "subCategory",
+  //     value: subCategory
+  //   };
+  // } else if (sort && sort !== "null") {
+  //   return {
+  //     key: "sort",
+  //     value: sort
+  //   };
+  // }
   return {
-    key:null,
-    value:null
-  }
-
+    key: null,
+    value: null
+  };
 }

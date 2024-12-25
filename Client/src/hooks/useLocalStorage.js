@@ -1,6 +1,3 @@
-
-
-
 export function getDataFromLocalStorage(key){
     let storeData=localStorage.getItem(key);
     if (storeData){

@@ -1,6 +1,8 @@
 import React,{useState} from 'react';
 import {useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { routes } from '../config/routes';
+import APISERVICES from '../config/api-services';
 
 const ResetPasswordHandler = () => {
   let [formdata, setFromData] = useState({
@@ -11,7 +13,7 @@ const ResetPasswordHandler = () => {
     
     let user=useSelector((store)=>store.user);
     if(!user.email){
-        navigate("/auth/forget_password");
+        navigate(routes.auth.forget_password);
         return;
     };
     
@@ -19,14 +21,9 @@ const ResetPasswordHandler = () => {
         try{
             event.preventDefault();
             formdata.email=user.email;
-            let data= await fetch('http://localhost:5051/api/v1/reset_password',{
-                method:"POST",
-                body:JSON.stringify(formdata),
-                headers:{'Content-Type':'application/json'}
-            })
-            let response=await data.json();
+            let response=await APISERVICES.auth.reset_password.post(formdata);
             if(response.success){
-                navigate("/auth/login");
+                navigate(routes.auth.login);
             }
         }catch(error){
             console.log(error);

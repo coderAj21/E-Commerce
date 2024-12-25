@@ -2,6 +2,9 @@ import React,{useState} from 'react'
 import { NavLink, useNavigate } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import { setEmail } from '../redux/slices/userSlice';
+import { routes } from '../config/routes';
+import APISERVICES from '../config/api-services';
+import toast from 'react-hot-toast';
 
 const ForgotPasswordHandler = ({}) => {
   let [formdata, setFromData] = useState({email: ""});
@@ -10,20 +13,15 @@ const ForgotPasswordHandler = ({}) => {
     async function submitHandler(event) {
         try{
             event.preventDefault();
-            let data=await fetch('http://localhost:5051/api/v1/forget_password',{
-                method:"POST",
-                body:JSON.stringify(formdata),
-                credentials:"include",
-                headers:{'Content-Type':'application/json'}
-            });
-            let response=await data.json();
+            let response=await APISERVICES.auth.forget_password.post(formdata);
             if(response.success){
                 dispatch(setEmail(formdata.email));
-                navigate("/auth/otp");
+                navigate(routes.auth.otp);
             }
+            return toast.error(response.message);
         }catch(error){
             console.log(error);
-
+            return toast.error(error.message);
         }
     };
     function changeHanlder(event) {

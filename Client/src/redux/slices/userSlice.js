@@ -1,14 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { setDataInLocalStorage } from "../../hooks/useLocalStorage";
+import { USER_KEY_NAME } from "../../config/constant";
 
 const userSlice=createSlice({
     name:"user",
     initialState:{
-        user:"",
+        user_id:"",
         email:"",
     },
     reducers:{
-        addUser:(state,action)=>{
-            return action.payload;
+        setUser:(state,action)=>{
+            state.email=action.email;
+            state.user_id=action.user_id;            
         },
         removeUser:(state,action)=>{
             return null;
@@ -20,5 +23,5 @@ const userSlice=createSlice({
 })
 
 
-export const {addUser,removeUser,setEmail}=userSlice.actions;
+export const {setUser,removeUser,setEmail}=userSlice.actions;
 export default userSlice.reducer;

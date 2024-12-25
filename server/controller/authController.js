@@ -28,13 +28,19 @@ exports.login=async (req,res)=>{
                 message:"enter the correct password..."
             })
         }
-        let token=jwt.sign({email:user.data[0].email},process.env.JWT_SECRET);
+        let payload={
+            email: user.data[0].email,
+            user_id:user.data[0].user_id,
+        }
+        let token=jwt.sign(payload,process.env.JWT_SECRET);
         return res.cookie("token",token,{
             httpOnly:true,
         })
         .status(200).json({
             success:true,
-            message:"Successfully Login"
+            message:"Successfully Login",
+            data:payload,
+            token:token,
         })
     }catch(error){
         return res.status(400).json({
@@ -76,12 +82,18 @@ exports.signup=async (req,res)=>{
                 error:new_user.error
             })
         }
-        let token=jwt.sign({email:email},process.env.JWT_SECRET);
+        let payload = {
+          email: email,
+          user_id: new_user.data,
+        };
+        let token=jwt.sign(payload,process.env.JWT_SECRET);
         return res.cookie("token",token,{
             httpOnly:true,
         })
         .status(200).json({
             success:true,
+            data:payload,
+            token:token,
             message:"Successfully Login"
         })
     }catch(error){

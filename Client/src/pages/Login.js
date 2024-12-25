@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginHandler from "../component/LoginHandler";
 import SigninHanlder from '../component/SigninHandler';
 
 const Login = () => {
     let [isLogin,setIsLogin]=useState(true);
+    useEffect(()=>{
+
+    },[])
   return (
     <div className='w-full h-[80%] flex items-center justify-center'>
         {

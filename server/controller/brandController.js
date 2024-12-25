@@ -1,3 +1,4 @@
+const { get_all_brands_from_database } = require("../models/brandLogic");
 
 
 exports.getAllBrands=async (req,res)=>{
@@ -12,7 +13,8 @@ exports.getAllBrands=async (req,res)=>{
         }
         return res.status(200).json({
             success:false,
-            message:"Brands not found...."
+            message:"Brands not found....",
+            data:response.data,
         })
     }catch(error){
         return res.status(404).json({
