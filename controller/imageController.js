@@ -1,5 +1,6 @@
 const path = require("path");
-const { add_product_image_in_database } = require("../models/ProductLogic");
+let sql = require("../config/database")();
+
 
 
 exports.addImage = async (req, res) => {
@@ -16,7 +17,7 @@ exports.addImage = async (req, res) => {
     }
     return res.status(200).json({
       success: true,
-      message: "Image aa gyi",
+      message: "Product Images Add successfully",
     });
   } catch (error) {
     return res.status(400).json({
@@ -59,6 +60,28 @@ async function submit_all_images(product_id, image) {
     return {
       success: false,
       message: "Error in uploading the product images to database",
+      error: error,
+    };
+  }
+}
+
+
+async function add_product_image_in_database(product_id, name) {
+  try {
+    let [result] = await sql.query(
+      ` insert into products_images (product_id,value)
+              values(?,?);
+            `,
+      [product_id, name]
+    );
+    return {
+      success: true,
+      message: "product Images Add successfully",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: "Error in inserting the product image in database",
       error: error,
     };
   }

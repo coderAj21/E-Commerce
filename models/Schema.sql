@@ -50,23 +50,12 @@ create table products(
     product_name text not null,
     description text not null,
     category_id int unsigned,
+    brand_id int unsigned,
+    unit_id int unsigned,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
-    brand_name varchar(255) not null,
     is_avaialble boolean not null default 1,
     foreign key (category_id) references category(category_id)
-);
-
-create table products_details(
-    products_details_id int unsigned primary key auto_increment,
-    product_id int unsigned,
-    original_price int unsigned not null,
-    final_price int unsigned not null,
-    discount int unsigned not null,
-    quantity int unsigned not null,
-    created_at timestamp default current_timestamp,
-    updated_at timestamp,
-    foreign key (product_id) references products(product_id)
 );
 
 create table products_images(
@@ -80,11 +69,13 @@ create table products_images(
 create table products_weight(
     product_weight_id int unsigned primary key auto_increment,
     product_id int unsigned,
-    weight_id int unsigned,
+    label varchar(100) not null,
+    original_price float unsigned not null,
+    final_price float unsigned not null,
+    discount float unsigned not null default 0,
     created_at timestamp default current_timestamp,
     updated_at timestamp,
     foreign key (product_id) references products(product_id)
-    foreign key (weight_id) references weights(weight_id)
 );
 
 create table products_flavours(
@@ -96,7 +87,19 @@ create table products_flavours(
     foreign key (product_id) references products(product_id)
     foreign key (flavour_id) references flavours(flavour_id)
 );
-
+create table product_nutritions(
+    product_nutrition_id int unsigned primary key auto_increment,
+    product_id int unsigned,
+    nutrition_id int unsigned,
+    label varchar(100) not null,
+    value float unsigned not null,
+    unit_id int unsigned,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp,
+    foreign key (product_id) references products(product_id),
+    foreign key (nutrition_id) references nutrition(nutrition_id)
+    foreign key (unit_id) references unit(unit_id),
+);
 create table order_details(
 	order_id int unsigned primary key auto_increment,
     user_id int unsigned,
