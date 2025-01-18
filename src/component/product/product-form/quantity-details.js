@@ -15,7 +15,7 @@ const QuantityDetailsForm = ({ taxonomy }) => {
     setValue,
     formState: { errors },
   } = useFormContext();
-  console.log(watch("weight"));
+  // console.log(watch("weight"));
   return (
     <div className="w-full h-full">
       <div className="grid grid-cols-2 gap-5 my-1 mt-10">
@@ -58,7 +58,7 @@ const QuantityDetailsForm = ({ taxonomy }) => {
           )}
         />
         <Controller
-          name="unit"
+          name="unit_id"
           control={control}
           rules={{ required: "unit is required" }}
           render={({ field, formState: { error } }) => (

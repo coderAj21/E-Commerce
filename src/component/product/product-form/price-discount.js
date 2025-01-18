@@ -14,14 +14,15 @@ const PriceDiscountComponent = ({ name, index, taxonomy }) => {
       <div className="">
         <Text className="text-sm font-medium leading-5 my-1">
           Weight in{" "}
-          {watch("unit") &&
-            taxonomy?.unit.find((item) => item.unit_id === watch("unit"))
+          {watch("unit_id") &&
+            taxonomy?.unit.find((item) => item.unit_id === watch("unit_id"))
               .value}{" "}
         </Text>
         <Badge rounded="sm" variant="outline" className="text-sm px-8 min-w-32">
           {watch(`${name}[${index}].label`)}{" "}
-          {watch("unit") &&
-            taxonomy?.unit.find((item) => item.unit_id === watch("unit")).value}
+          {watch("unit_id") &&
+            taxonomy?.unit.find((item) => item.unit_id === watch("unit_id"))
+              .value}
         </Badge>
       </div>
       <Controller
@@ -30,16 +31,18 @@ const PriceDiscountComponent = ({ name, index, taxonomy }) => {
         render={({ field, fieldState: { error } }) => (
           <Input
             {...field}
+            type="number"
             label="Original Price*"
             placeholder="Enter the Base Price"
-            onChange={(evt)=>{
-                field.onChange(evt);
-                let base_price = watch(`${name}[${index}].original_price`);
-                let discount = watch(`${name}[${index}].discount`);
-                let final_price = parseFloat(
-                  (base_price * (1 - discount / 100)).toFixed(2)
-                );
-                setValue(`${name}[${index}].final_price`, final_price);
+            onChange={(evt) => {
+              let val=parseFloat(evt.target.value);
+              field.onChange(val);
+              let base_price = watch(`${name}[${index}].original_price`);
+              let discount = watch(`${name}[${index}].discount`);
+              let final_price = parseFloat(
+                (base_price * (1 - discount / 100)).toFixed(2)
+              );
+              setValue(`${name}[${index}].final_price`, final_price);
             }}
             className="my-4"
             error={error?.message}
@@ -68,7 +71,7 @@ const PriceDiscountComponent = ({ name, index, taxonomy }) => {
               let final_price = parseFloat(
                 (base_price * (1 - discount / 100)).toFixed(2)
               );
-              setValue(`${name}[${index}].final_price`,final_price);
+              setValue(`${name}[${index}].final_price`, final_price);
             }}
             className="my-4"
             error={error?.message}

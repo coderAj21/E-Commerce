@@ -31,7 +31,7 @@ const ProductDetailsForm = ({ taxonomy }) => {
       />
       <div className="grid grid-cols-2 gap-x-4 my-10">
         <Controller
-          name="category_name"
+          name="category_id"
           control={control}
           rules={{ required: "Category is required" }}
           render={({ field }) => (
@@ -76,7 +76,7 @@ const ProductDetailsForm = ({ taxonomy }) => {
           )}
         />
         <Controller
-          name="brand"
+          name="brand_id"
           control={control}
           rules={{ required: "Brand is required" }}
           render={({ field, formState: { error } }) => (
@@ -155,7 +155,10 @@ const ProductDetailsForm = ({ taxonomy }) => {
         {watch("product_image")?.map((src, index) => {
           const imgSrc = URL.createObjectURL(src);
           return (
-            <div key={"image"+index} className="relative max-w-[150px] m-2 shadow px-2 border rounded-lg">
+            <div
+              key={"image" + index}
+              className="relative max-w-[150px] m-2 shadow px-2 border rounded-lg"
+            >
               <div className="flex justify-between items-center">
                 <p className="font-medium">Image {index + 1}</p>
                 <Button

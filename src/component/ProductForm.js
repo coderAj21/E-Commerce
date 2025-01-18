@@ -16,20 +16,18 @@ function ProductForm() {
     defaultValues: {
       product_name: "",
       description: "",
-      category_name: "",
-      brand: "",
+      category_id: "",
+      brand_id: "",
       flavour: [],
       weight: [],
       product_image: [],
-      unit: "",
-      nutrition_arr: [],
+      unit_id: "",
       nutrition: [],
     },
   });
   const {
-    control,
     handleSubmit,
-    reset,
+    watch,
     formState: { errors },
   } = methods;
 
@@ -74,7 +72,7 @@ function ProductForm() {
   if (apiLoading) {
     return <CustomLoader />;
   }
-  // console.log(watch());
+  console.log(errors);
 
   return (
     <FormProvider {...methods}>
