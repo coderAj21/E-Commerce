@@ -90,7 +90,7 @@ async function add_product_nutrition_in_database(product_id, nutritions) {
       nutrition.nutrition_id,
       nutrition.label,
       nutrition.value,
-      nutrition.unit,
+      nutrition.unit_id,
     ]);
     const placeholders = values.map(() => `(?, ?, ?, ?, ?)`).join(", ");
     const flatValues = values.flat();
@@ -131,8 +131,8 @@ async function get_all_products_from_database() {
             JSON_OBJECT(
                 'product_weight_id', pw.product_weight_id,
                 'label', pw.label,
-                'original_price', pw.original_price,
-                'final_price', pw.final_price,
+                'original_price', round(pw.original_price, 2),
+                'final_price', round(pw.final_price, 2),
                 'discount', pw.discount,
                 'unit', JSON_OBJECT('unit_id', u.unit_id, 'value', u.value)
             )
@@ -153,7 +153,7 @@ async function get_all_products_from_database() {
         FROM product_nutritions AS pn
         INNER JOIN unit AS un ON pn.unit_id = un.unit_id
         WHERE pn.product_id = p.product_id
-    ) AS nutrition_details
+    ) AS nutrition
 FROM 
     products AS p
 INNER JOIN
