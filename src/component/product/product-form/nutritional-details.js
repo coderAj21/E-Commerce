@@ -13,6 +13,7 @@ const NutritionalDetailForm = ({ taxonomy }) => {
     control,
     formState: { errors },
   } = useFormContext();
+  console.log(watch())
   return (
     <>
       <div className="w-full relative h-full flex items-center gap-x-4 ">
@@ -24,7 +25,7 @@ const NutritionalDetailForm = ({ taxonomy }) => {
               taxonomy?.nutrition?.map((item) => ({
                 value: item?.nutrition_id,
                 label: item?.value,
-                unit: "",
+                unit_id: "",
                 nutrition_id: item?.nutrition_id,
               })) || [];
             function renderDisplayValue(selectedOptions) {

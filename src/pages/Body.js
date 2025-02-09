@@ -1,6 +1,5 @@
 import Home from "../pages/Home";
 import { Routes,Route } from "react-router-dom";
-import ProductPage from "./ProductPage";
 import ProductForm from "../component/ProductForm";
 import useProduct from "../hooks/useProduct";
 import Cart from "./Cart";
@@ -15,8 +14,9 @@ import { getDataFromLocalStorage } from "../hooks/useLocalStorage";
 import { useDispatch, useSelector } from "react-redux";
 import { setCartItem } from "../redux/slices/cartSlice";
 import { setWishlist } from "../redux/slices/wishlistSlice";
-import FilterPage from "./FilterPage";
 import Profile from "./user-profile/Profile";
+import ProductPage from "./product/ProductPage";
+import ProductFilter from "./product/filter";
 
 
 function Body(){
@@ -51,7 +51,7 @@ function Body(){
                         <Route path="reset_password" element={<ResetPasswordHandler/>}></Route>
                         <Route path="profile" element={<Profile/>}></Route>
                     </Route>
-                    <Route path="/filter" element={<FilterPage/>}></Route>
+                    <Route path="/filter" element={<ProductFilter/>}></Route>
                 </Routes>
             </div>
         </div>

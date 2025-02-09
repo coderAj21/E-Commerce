@@ -2,20 +2,28 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button, Input } from "rizzui";
-import { weightSchema } from "../../../../types/types";
 import APISERVICES from "../../../../config/api-services";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import CustomLoader from "../../../custom-loader";
+import * as yup from "yup";
 
 const AddWeight = ({ setOpen }) => {
   const methods = useForm({
-    resolver: yupResolver(weightSchema),
+    resolver: yupResolver(
+      yup.object({ weight: yup.number().required("Weight is required...") })
+    ),
     defaultValues: {
       weight: 0,
     },
   });
-  const { setValue, handleSubmit, control,setError,formState:{errors} } = methods;
+  const {
+    setValue,
+    handleSubmit,
+    control,
+    setError,
+    formState: { errors },
+  } = methods;
   const onSubmit = async (data) => {
     mutate(data);
   };
@@ -46,7 +54,7 @@ const AddWeight = ({ setOpen }) => {
   if (isPending) {
     return <CustomLoader />;
   }
-  console.log(errors)
+  console.log(errors);
   return (
     <FormProvider {...methods}>
       <div>
@@ -60,7 +68,7 @@ const AddWeight = ({ setOpen }) => {
                 {...field}
                 type="number"
                 placeholder="Enter the Weight"
-                onChange={(evt)=>{
+                onChange={(evt) => {
                   field.onChange(parseFloat(evt?.target?.value));
                 }}
                 className="my-4"

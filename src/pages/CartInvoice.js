@@ -4,12 +4,12 @@ import { useSelector } from 'react-redux';
 const CartInvoice = () => {
     let cartData=useSelector((store)=>store?.cart.data);
     let sub_total=cartData?.reduce((sum,curr)=>{
-        return sum+(curr.final_price*curr.quantity)
+        return sum+(curr?.weight?.final_price*curr.quantity)
     },0)
     sub_total=Math.round((sub_total*100))/100;
     let shipping=0;
     let tax=cartData?.reduce((sum,curr)=>{
-        return sum+(curr.final_price*(curr.discount/100));
+        return sum+(curr?.weight?.final_price*(curr?.weight?.discount/100));
     },0);
     tax=Math.round((tax*100))/100;
   return (

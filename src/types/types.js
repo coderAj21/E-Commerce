@@ -57,7 +57,7 @@ export const weightSchema = yup.object({
 export const formSchema = yup.object().shape({
   product_name: yup.string().required("Product name is required."),
   description: yup.string().required("Description is required."),
-  category_name: yup.number().required("Category name is required."),
+  category_id: yup.number().required("Category name is required."),
   brand_id: yup.number().required("Brand is required."),
   flavour: yup.array().of(yup.number().required("Flavour must be a Required.")), // Array of strings
   weight: yup.array().of(weightSchema), // Array of strings

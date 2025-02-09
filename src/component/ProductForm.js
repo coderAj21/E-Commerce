@@ -2,15 +2,23 @@ import { useForm, FormProvider } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Button, Tab } from "rizzui";
 import APISERVICES from "../config/api-services";
-import { useQuery } from "@tanstack/react-query";
 import CustomLoader from "./custom-loader";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { formSchema } from "../types/types";
 import ProductDetailsForm from "./product/product-form/product-details";
 import QuantityDetailsForm from "./product/product-form/quantity-details";
 import NutritionalDetailForm from "./product/product-form/nutritional-details";
+import { useNavigate} from "react-router-dom";
+import { routes } from "../config/routes";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchTaxonomy } from "../redux/slices/taxonomySlice";
 
 function ProductForm() {
+  let navigate=useNavigate();
+  const dispatch=useDispatch();
+  const {data:taxonomy,loading:apiLoading}=useSelector((store)=>store?.taxonomy);
+  
   const methods = useForm({
     resolver: yupResolver(formSchema),
     defaultValues: {
@@ -25,26 +33,13 @@ function ProductForm() {
       nutrition: [],
     },
   });
+  
   const {
     handleSubmit,
     watch,
     formState: { errors },
   } = methods;
 
-  const { data: taxonomy = {}, isLoading: apiLoading } = useQuery({
-    queryKey: ["taxonomy"],
-    queryFn: async () => {
-      const res = await APISERVICES.taxonomy.get();
-      if (res?.success) {
-        return res?.data || {};
-      } else {
-        throw new Error(res?.message || "Failed to load data");
-      }
-    },
-    onError: (error) => {
-      toast.error(error.message, { position: "top-center" });
-    },
-  });
 
   const onSubmit = async (data) => {
     try {
@@ -62,12 +57,17 @@ function ProductForm() {
         throw new Error(imageResponse.message);
       }
       toast.success(imageResponse.message, { position: "top-center" });
+      return navigate(routes.home.listing);
     } catch (error) {
       toast.error(error.message || "Something went wrong!", {
         position: "top-center",
       });
     }
   };
+
+  useEffect(() => {
+    dispatch(fetchTaxonomy());
+  }, [dispatch]);
 
   if (apiLoading) {
     return <CustomLoader />;

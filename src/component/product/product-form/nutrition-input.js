@@ -26,7 +26,7 @@ const NutritionInput = ({ name, index, obj, taxonomy }) => {
           inputClassName="p-0 pl-2"
           suffix={
             <Controller
-              name={`${name}[${index}].unit`}
+              name={`${name}[${index}].unit_id`}
               control={control}
               rules={{ required: "unit is required" }}
               render={({ field }) => (
@@ -44,7 +44,7 @@ const NutritionInput = ({ name, index, obj, taxonomy }) => {
                     );
                   }}
                   onChange={(selected) =>
-                    setValue(`${name}[${index}].unit`, selected.value)
+                    setValue(`${name}[${index}].unit_id`, selected.value)
                   }
                   placeholder="Select Unit"
                   error={errors.unit?.message}

@@ -16,10 +16,10 @@ export const routes = {
   Wishlist: {
     listing: "/wishlist",
   },
-  filter: {
-    listing: (category = null, subCategory = null, brand = null, sort = null) =>
-      `/filter?category_name=${category}&subCategory=${subCategory}&brand_name=${brand}&sort=${sort}`,
-  },
+  // filter: {
+  //   listing: (category = null, subCategory = null, brand = null, sort = null) =>
+  //     `/filter?category_name=${category}&subCategory=${subCategory}&brand_name=${brand}&sort=${sort}`,
+  // },
   auth: {
     login: "/auth/login",
     otp: "auth/otp",

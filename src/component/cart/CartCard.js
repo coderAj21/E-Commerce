@@ -1,7 +1,7 @@
 import React from 'react'
 import { RxCrossCircled } from "react-icons/rx";
 import { useDispatch } from 'react-redux';
-import { decreaseItemQuantity, increaseItemQuantity, removeItemToCart } from '../redux/slices/cartSlice';
+import { decreaseItemQuantity, increaseItemQuantity, removeItemToCart } from '../../redux/slices/cartSlice';
 
 
 const CartCard = ({product_id,product_name,final_price,images,quantity}) => {
