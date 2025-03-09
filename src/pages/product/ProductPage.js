@@ -1,30 +1,19 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Slider from "react-slick";
 import { IoCart } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { addItemToCart } from "../../redux/slices/cartSlice";
 import { addItemToWishlist } from "../../redux/slices/wishlistSlice";
 import CustomLoader from "../../component/custom-loader";
 import { Button } from "rizzui";
 import NutritionFacts from "../../component/product/NutritionFacts";
-let url = process.env.REACT_APP_BACKEND_URL;
+import { useQuery } from "@tanstack/react-query";
+import APISERVICES, { BASE_URL } from "../../config/api-services";
 
-function findProductById(arr, idx) {
-  for (let item of arr) {
-    if (item.product_id === idx) {
-      return item;
-    }
-  }
-  return null;
-}
 
 function ProductPage() {
   const { idx } = useParams();
-  let product_data = useSelector((store) => store?.product?.data);
-  let dispatch = useDispatch();
-  let data = findProductById(product_data, parseInt(idx));
-
   var settings = {
     infinite: true,
     speed: 500,
@@ -39,6 +28,8 @@ function ProductPage() {
     },
   };
 
+  const dispatch=useDispatch();
+
   let [imageIndex, setImageIndex] = useState(1);
   const [product, setProduct] = useState({
     product_id: "",
@@ -48,6 +39,7 @@ function ProductPage() {
     flavour: "",
     weight: "",
   });
+
   function addToCart() {
     let obj = { ...data, quantity: 1 };
     dispatch(addItemToCart(obj));
@@ -57,21 +49,33 @@ function ProductPage() {
     dispatch(addItemToWishlist(obj));
   }
 
-  useEffect(() => {
-    if (data) {
-      setProduct({
-        product_id: data?.product_id,
-        product_name: data?.product_name,
-        brand: data?.brand,
-        category: data?.category,
-        flavour: data?.flavours[0],
-        weight: data?.weights[0],
-      });
-    }
-  }, [data]);
-  if (!data) return <CustomLoader />;
+  const { data = {}, isLoading: apiLoading } = useQuery({
+    queryKey: ["product_detail", idx],
+    queryFn: async () => {
+      try {
+        let res = await APISERVICES.product.get(idx);
+        if (res?.success) {
+          setProduct({
+            product_id: res?.data?.product_id,
+            product_name: res?.data?.product_name,
+            brand: res?.data?.brand,
+            category: res?.data?.category,
+            flavour: res?.data?.flavours[0],
+            weight: res?.data?.weights[0],
+          });
+        }
+        return res?.data || {};
+      } catch (error) {
+        return {};
+      }
+    },
+  });
 
-  // console.log(data);
+  if (apiLoading) {
+    return <CustomLoader />;
+  }
+
+
   return (
     <div className="w-full my-4 flex flex-col">
       <div className="relative w-full grid grid-cols-2  max-md:grid-cols-1">
@@ -80,7 +84,7 @@ function ProductPage() {
           <div className="w-10/12 mx-auto shadow-product my-4 h-1/2">
             <img
               className="w-full h-full p-1 object-contain"
-              src={`${url}/${data?.images[imageIndex]?.value}`}
+              src={`${BASE_URL}/${data?.images[imageIndex]?.value}`}
               alt="product"
             ></img>
           </div>
@@ -101,7 +105,7 @@ function ProductPage() {
                                                     ? "border-2 border-black "
                                                     : ""
                                                 }`}
-                        src={`${url}/${obj.value}`}
+                        src={`${BASE_URL}/${obj.value}`}
                         alt={"product" + idx}
                       ></img>
                     </div>

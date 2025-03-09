@@ -2,8 +2,7 @@ import Home from "../pages/Home";
 import { Routes,Route } from "react-router-dom";
 import ProductForm from "../component/ProductForm";
 import useProduct from "../hooks/useProduct";
-import Cart from "./Cart";
-import Login from "./Login";
+import Login from "../component/auth/Login";
 import AuthPage from "./AuthPage";
 import ForgotPasswordHandler from "../component/ForgotPasswordHandler";
 import OTPHandler from "../component/OTPHandler";
@@ -17,6 +16,10 @@ import { setWishlist } from "../redux/slices/wishlistSlice";
 import Profile from "./user-profile/Profile";
 import ProductPage from "./product/ProductPage";
 import ProductFilter from "./product/filter";
+import AboutUs from "./about-us-page";
+import ContactUs from "./contact-us";
+import Cart from "./cart/Cart";
+import Checkout from "./checkout/checkout";
 
 
 function Body(){
@@ -52,6 +55,9 @@ function Body(){
                         <Route path="profile" element={<Profile/>}></Route>
                     </Route>
                     <Route path="/filter" element={<ProductFilter/>}></Route>
+                    <Route path="/about_us" element={<AboutUs/>} ></Route>
+                    <Route path="/contact_us" element={<ContactUs/>} ></Route>
+                    <Route path="/checkout" element={<Checkout/>} ></Route>
                 </Routes>
             </div>
         </div>

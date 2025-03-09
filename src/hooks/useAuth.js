@@ -49,19 +49,18 @@ const getAuth = () => {
 
 const isUserLogin=()=>{
   try{
-    const user = JSON.parse(window.localStorage.getItem(USER_STORAGE_KEY));
-    const tokenCookie = window.document.cookie
+    const user = JSON.parse(window?.localStorage?.getItem(USER_STORAGE_KEY));
+    const tokenCookie = window?.document?.cookie
       .split(";")
       .find((cookie) => cookie.trim().startsWith(`${TOKEN_COOKIE_KEY}=`))
       .split("=")[1];
-
+    console.log(tokenCookie)
     if("email" in user && "user_id" in user && tokenCookie){
       return true;
     }
     return false;
   }catch(error){
-    console.error(error);
-    return null;
+    return false;
   }
 }
 

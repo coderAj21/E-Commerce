@@ -18,8 +18,8 @@ export const addressFormSchema = yup
     landmark: yup.string(),
     alternatePhone: yup
       .string()
-      .matches(/^\d{10}$/, "Alternate phone must be 10 digits")
-      .nullable(),
+      .nullable()
+      .optional(),
     address_type: yup
       .string()
       .oneOf(["home", "work"], "Address type must be either 'home' or 'work'")

@@ -1,16 +1,18 @@
 import React,{useEffect, useState} from 'react';
-import { useDispatch } from 'react-redux';
 import {NavLink, useNavigate } from 'react-router-dom';
 import { Input, Password } from 'rizzui';
-import { setUser } from '../redux/slices/userSlice';
 import toast from 'react-hot-toast';
-import { routes } from '../config/routes';
-import { useAuth } from '../hooks/useAuth';
-import APISERVICES from '../config/api-services';
+import { routes } from '../../config/routes';
+import { useAuth } from '../../hooks/useAuth';
+import APISERVICES from '../../config/api-services';
+
+
+
 const LoginHandler = ({isLogin,setIsLogin}) => {
+
     let navigate=useNavigate();
     const { setUserToken, isUserLogin } = useAuth();
-    const dispatch=useDispatch();
+    
     let [formdata, setFromData] = useState({
         email: "",
         password: "",
@@ -20,7 +22,6 @@ const LoginHandler = ({isLogin,setIsLogin}) => {
             event.preventDefault();
             let response=await  APISERVICES.auth.login.post(formdata);
             if(response.success){
-                dispatch(setUser(response.data));
                 setUserToken(response.data,response.token);
                 toast.success(response.message);
                 navigate(routes.home.listing);

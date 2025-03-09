@@ -1,49 +1,98 @@
-import React from 'react'
-import { RxCrossCircled } from "react-icons/rx";
-import { useDispatch } from 'react-redux';
-import { decreaseItemQuantity, increaseItemQuantity, removeItemToCart } from '../../redux/slices/cartSlice';
+import React from "react";
+import { useDispatch } from "react-redux";
+import {
+  decreaseItemQuantity,
+  increaseItemQuantity,
+  removeItemToCart,
+} from "../../redux/slices/cartSlice";
+import { Button } from "rizzui";
+import { FaMinus } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa6";
 
-
-const CartCard = ({product_id,product_name,final_price,images,quantity}) => {
-    let dispatch=useDispatch();
-    function removeHandler(){
-        dispatch(removeItemToCart(product_id));
-    }
-    function decreaseQuantiy(){
-        dispatch(decreaseItemQuantity(product_id));
-    }
-    function increaseQuantity(){
-        dispatch(increaseItemQuantity(product_id));
-    }
+const CartCard = ({ obj }) => {
+  let dispatch = useDispatch();
+  function removeHandler() {
+    dispatch(removeItemToCart(obj?.product_id));
+  }
+  function decreaseQuantiy() {
+    dispatch(decreaseItemQuantity(obj?.product_id));
+  }
+  function increaseQuantity() {
+    dispatch(increaseItemQuantity(obj?.product_id));
+  }
   return (
-    <div className='w-full my-8 px-3 flex gap-x-2 items-center justify-between'>
-        <div className='relative w-[40%] flex items-center gap-x-4'>
-            <div className="flex items-center justify-center">
-                <RxCrossCircled 
-                onClick={removeHandler} 
-                className='text-red-600 text-3xl cursor-pointer hover:scale-95'
-                />
-            </div>
-
-            <img src={`http://localhost:5051/${images[0].value}`}
-                 className='w-[75px] border border-black'  
-             alt='cart card photu'></img>
-            <p className='text-wrap'>{product_name}</p>
+    <div className="w-full p-4 flex flex-col gap-x-2 shadow-md border mb-4">
+      <div className="w-full flex items-start gap-10">
+        <div className="min-w-[120px] w-2/12">
+          <img
+            src={`http://localhost:5051/${obj?.images[0]?.value}`}
+            className="w-full object-cover rounded "
+            alt="cart_card_image "
+          ></img>
         </div>
-        <p className="w-[20%] text-2xl">₹{final_price}</p>
-        <div className='w-[20%] h-fit'>
-            <div className='w-fit gap-x-4 flex items-center text-2xl border border-black select-none'>
-                <p
-                onClick={decreaseQuantiy} 
-                className={`p-1 px-4 pb-2 font-bold text-3xl cursor-pointer hover:scale-110 border-r-2 ${quantity>1?"":"pointer-events-none bg-zinc-200"}`}>-</p>
-                <p className='p-1 '>{quantity}</p>
-                <p onClick={increaseQuantity}
-                className={`p-1 px-3 font-bold text-3xl cursor-pointer hover:scale-105 border-l-2 ${quantity<5?"":"pointer-events-none bg-zinc-200"} `}>+</p>
-            </div>
+        <div className="-mt-2 min-w-[400px] w-full ">
+          <p className="text-lg font-medium">{obj?.product_name}</p>
+          <div className="flex gap-2 my-1 text-gray-700 text-base ">
+            <p>
+              Weight: {obj?.weight?.label}
+              {obj?.weight?.unit?.value},
+            </p>
+            <p>Flavour: {obj?.flavour?.value}</p>
+          </div>
+          <p className="font-medium">Brand: {obj?.brand?.value} </p>
+          <div className="flex gap-3 my-1 items-center">
+            <p className="line-through text-gray-600 text-xl">
+              ₹{Math.round(obj?.weight?.original_price * obj?.quantity*100)/100}
+            </p>
+            <p className="text-3xl font-bold">
+              ₹
+              {Math.round(obj?.weight?.final_price * obj?.quantity * 100) / 100}
+            </p>
+            <p className="text-2xl text-green-600 font-bold">
+              {" "}
+              {obj?.weight?.discount}% off
+            </p>
+          </div>
         </div>
-        <p className="w-[10%] text-2xl">₹{quantity*final_price}</p>
+        <div className="-mt-2 min-w-[200px] w-full ">
+          <p className="text-xl font-medium">Delivery in 2-3 Days</p>
+          <p className="text-green-600 font-medium text-lg">Free</p>
+        </div>
+      </div>
+      <div className="w-full mt-2 flex items-center gap-4 ">
+        <div className="min-w-[100px]  w-2/12 gap-x-2 flex items-center select-none">
+          <Button
+            onClick={decreaseQuantiy}
+            variant="solid"
+            size="sm"
+            disabled={!(obj?.quantity > 1)}
+            className="rounded-full w-8 h-8"
+          >
+            <FaMinus className="size-6" />
+          </Button>
+          <p className="border-2 border-black px-5 text-xl text-center font-semibold">
+            {obj?.quantity}
+          </p>
+          <Button
+            onClick={increaseQuantity}
+            variant="solid"
+            size="sm"
+            disabled={!(obj?.quantity < 5)}
+            className="rounded-full w-8 h-8"
+          >
+            <FaPlus className="size-6" />
+          </Button>
+        </div>
+        <Button
+          onClick={removeHandler}
+          variant="text"
+          className="p-0 text-xl text-red-600 hover:text-red-500 underline"
+        >
+          Remove
+        </Button>
+      </div>
     </div>
-  )
-}
+  );
+};
 
 export default CartCard;

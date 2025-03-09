@@ -15,7 +15,7 @@ const options = [
   { label: "Price: High to Low", value: "dschtol" },
 ];
 
-const Filter = ({ obj, urlHandler }) => {
+const Filter = ({ obj, urlHandler,data}) => {
   const dispatch = useDispatch();
   const [query, setQuery] = useState(obj);
   const { data: taxonomy, loading } = useSelector((store) => store?.taxonomy);
@@ -28,8 +28,6 @@ const Filter = ({ obj, urlHandler }) => {
       return { ...prev, minPrice: value[0], maxPrice: value[1] };
     });
   }
-  let data = useSelector((store) => store?.product?.data);
-
   useEffect(() => {
     dispatch(fetchTaxonomy());
   }, [dispatch]);

@@ -57,7 +57,11 @@ function ProductCard({ data }) {
           ></img>
         </div>
         <div className="w-full px-4 ">
-          <p className="my-1">{data?.product_name.substring(0, 30) + "..."}</p>
+          <Tooltip rounded="pill" color="info" content={data?.product_name}>
+            <p className="my-1">
+              {data?.product_name.substring(0, 25) + "..."}
+            </p>
+          </Tooltip>
           <div className="w-full flex items-center justify-start gap-x-2 ">
             <span className="font-bold">₹ {data?.weights[0]?.final_price}</span>
             <span className="line-through text-zinc-500">

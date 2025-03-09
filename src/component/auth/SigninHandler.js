@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '../config/routes';
-import APISERVICES from '../config/api-services';
+import { routes } from '../../config/routes';
+import APISERVICES from '../../config/api-services';
 import toast from 'react-hot-toast';
 
 const SigninHandler = ({isLogin,setIsLogin}) => {

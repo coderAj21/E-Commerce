@@ -1,53 +1,65 @@
 import React, { useState } from "react";
-import { Button,Modal, Dropdown} from "rizzui";
-import { HiDotsVertical } from "react-icons/hi";
+import { Button } from "rizzui";
 import { AddressForm } from "../../component/AddressForm";
+import ModalButton from "../../component/modal_button";
+import { useAuth } from "../../hooks/useAuth";
+import CustomLoader from "../../component/custom-loader";
+import AddressCard from "../../component/user/address/address-card";
+import APISERVICES from "../../config/api-services";
+import { useQuery } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
-const AddressInformation=()=>{
-    const [modalState, setModalState] = useState(false);
-    return (
-        <div className="w-full h-full">
-            <div className="flex items-center gap-x-2 px-2 ">
-                <p className='text-xl font-sans font-semibold my-3'>Manage Addresses</p>
-                <Button className="w-fit p-0 px-4" variant="solid" onClick={() => setModalState(true)}>+ Add A New Address</Button>
-                <Modal isOpen={modalState} onClose={() => setModalState(false)}>
-                    <AddressForm setModalState={setModalState} />
-                </Modal>
-            </div>
-            <div className="w-3/5 my-4">
-            </div>
+const AddressInformation = () => {
+  const { user, isUserLogin } = useAuth();
+
+  const { data: address_arr = [], isLoading } = useQuery({
+    queryKey: ["address-listing-profile"],
+    queryFn: async () => {
+      try {
+        let res = await APISERVICES.user.get(`/address/${user?.user_id}`);
+        if (res?.success) {
+          return res?.data || [];
+        }
+        return [];
+      } catch (error) {
+        toast.error(error?.message);
+        return [];
+      }
+    },
+    refetchOnWindowFocus: false,
+  });
+  if (isLoading) {
+    return <CustomLoader />;
+  }
+  return (
+    <div className="min-w-[600px] h-[700px] w-3/5  overflow-y-auto ">
+      <div className=" w-full flex items-center justify-between  ">
+        <p className="text-xl font-sans font-semibold my-3">Manage Addresses</p>
+        <div className="w-fit flex justify-end">
+          <ModalButton
+            label={
+              <Button
+                variant="text"
+                className="underline text-lg hover:bg-gray-100 text-blue-600 hover:text-blue-700"
+              >
+                Add a new address
+              </Button>
+            }
+            view={<AddressForm />}
+          />
         </div>
-    )
-}
+      </div>
+      <div className="w-full my-4">
+        {address_arr.map((item, idx) => {
+          return (
+            <div className="w-full shadow rounded p-3 border my-3">
+              <AddressCard key={idx} item={item} idx={idx} />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
 
 export default AddressInformation;
-
-
-
-
-const AddressData=()=>{
-    return (
-      <div className="w-full p-4 my-6 shadow rounded bg-slate-50">
-        <div className="w-full flex justify-between items-center">
-          <span className="uppercase bg-slate-200 p-1 text-sm">Home</span>
-          <Dropdown className="">
-            <Dropdown.Trigger>
-              <HiDotsVertical />
-            </Dropdown.Trigger>
-            <Dropdown.Menu className="w-fit">
-              <Dropdown.Item>Edit</Dropdown.Item>
-              <Dropdown.Item>Delete</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div className="flex gap-x-3 my-1 font-medium">
-          <p>Ashutosh Joshi</p>
-          <p>9717443134</p>
-        </div>
-        <p>
-          E-2/ gali no 10 surya vihar part -3 sehatpur faridabad, Gyasi Kothi,
-          Faridabad, Haryana - <span className="font-medium">121003</span>
-        </p>
-      </div>
-    );
-}

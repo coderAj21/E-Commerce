@@ -12,7 +12,6 @@ const APISERVICES = {
   brand: createApiFunction("brand"),
   product: createApiFunction("product"),
   order: createApiFunction("/order"),
-  address: createApiFunction("create_address"),
   category: createApiFunction("category"),
   taxonomy: createApiFunction("taxonomy"),
   flavour: createApiFunction("flavour"),

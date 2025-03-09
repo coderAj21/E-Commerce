@@ -1,11 +1,10 @@
-
 export const routes = {
   home: {
     listing: "/",
     home: "/home",
   },
   products: {
-    detials: (id) => `product/${id}`,
+    details: (id) => `product/${id}`,
   },
   order: {
     listing: "/order",
@@ -16,14 +15,26 @@ export const routes = {
   Wishlist: {
     listing: "/wishlist",
   },
-  // filter: {
-  //   listing: (category = null, subCategory = null, brand = null, sort = null) =>
-  //     `/filter?category_name=${category}&subCategory=${subCategory}&brand_name=${brand}&sort=${sort}`,
-  // },
+  filter: {
+    listing: (params = {}) =>
+      `/filter?` +
+      new URLSearchParams({
+        ...params,
+        minPrice: 0,
+        maxPrice: 10000,
+      }).toString(),
+  },
   auth: {
     login: "/auth/login",
     otp: "auth/otp",
     forget_password: "/auth/forget_password",
     profile: "/auth/profile",
   },
+  footer: {
+    about_us: "/about_us",
+    contact_us: "/contact_us",
+  },
+  checkout:{
+    index:"/checkout"
+  }
 };

@@ -22,7 +22,6 @@ function ProductSlider({data,heading}){
             <Slider {...settings}>
                 {
                     data?.map((val,idx)=>{
-                      console.log(val)
                         return (
                           <ProductCard
                             key={"product" + idx}

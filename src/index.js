@@ -7,6 +7,7 @@ import { store } from "./redux/store";
 import { Provider } from "react-redux";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import GlobalModal from "./utilities/model/container";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ root.render(
   <QueryClientProvider client={queryClient}>
     <Provider store={store}>
       <BrowserRouter>
+        <GlobalModal />
         <App />
         <Toaster />
       </BrowserRouter>

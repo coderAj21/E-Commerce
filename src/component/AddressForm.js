@@ -6,63 +6,78 @@ import {
   Checkbox,
   CheckboxGroup,
 } from "rizzui";
-import { countries_arr, states_arr } from "../config/constant";
+import { states_arr } from "../config/constant";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import APISERVICES from "../config/api-services.js";
 import { addressFormSchema } from "../types/types.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { useModal } from "../utilities/model/use-model.js";
 
-const defaultValue = {
-  name: "",
-  phone_number: "",
-  pincode: "",
-  country: "",
-  address_line: "",
-  city: "",
-  state: "",
-  landmark: "",
-  alternatePhone: "",
-  address_type: "home",
-};
-
-
-
-export const AddressForm = ({ setModalState }) => {
+export const AddressForm = ({ data, id }) => {
+  const { user } = useAuth();
   const methods = useForm({
-    defaultValues: defaultValue,
-    resolver: yupResolver(addressFormSchema)
+    defaultValues: {
+      address_id: id ? data?.address_id : "",
+      user_id: user?.user_id,
+      name: id ? data?.name : "",
+      phone_number: id ? data?.phone_number : "",
+      pincode: id ? data?.pincode : "",
+      country: "India",
+      address_line: id ? data?.address_line : "",
+      city: id ? data?.city : "",
+      state: id ? data?.state : "",
+      landmark: id ? data?.landmark : "",
+      alternatePhone: id ? data?.alternatePhone : "",
+      address_type: id ? data?.address_type : "home",
+    },
+    resolver: yupResolver(addressFormSchema),
   });
-  const {user}=useAuth();
-  console.log(user);
+  const { closeModal } = useModal();
   const {
     control,
     handleSubmit,
     watch,
     setValue,
     formState: { errors },
+    setError,
+    clearErrors,
   } = methods;
 
   const onSubmit = (data) => {
     mutate(data);
   };
-   const { mutate } = useMutation({
-     mutationFn: async (data) => {
-      // console.log(data);
-       const res = await APISERVICES.address.post(data,user.user_id);
-       return res;
-     },
-     onSuccess: (data) => {
-       toast.success(data.message);
-     },
-     onError(error, variables, context) {
-       toast.error(error.message);
-     },
-   });
 
-   console.log(errors);
+  const queryClient = useQueryClient();
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data) => {
+      const res = id
+        ? await APISERVICES.user.put(`/address/${user?.user_id}`, data)
+        : await APISERVICES.user.post(data, `/address/${user?.user_id}`);
+      return res;
+    },
+    onSuccess: (data) => {
+      if (data?.success) {
+        toast.success(data.message);
+        closeModal();
+      } else {
+        toast.error(data?.message);
+      }
+      queryClient.invalidateQueries({
+        queryKey: ["address-listing"],
+      });
+    },
+    onError(error, variables, context) {
+      toast.error(error.message);
+      queryClient.invalidateQueries({
+        queryKey: ["address-listing"],
+      });
+    },
+  });
+
+  console.log(errors);
   return (
     <FormProvider {...methods}>
       <form
@@ -91,36 +106,19 @@ export const AddressForm = ({ setModalState }) => {
                 type="number"
                 prefix="+91"
                 maxLength={10}
+                onChange={(evt) => {
+                  let val = evt.target.value;
+                  clearErrors("phone_number");
+                  if (!/^\d{10}$/.test(val)) {
+                    setError("phone_number", {
+                      message: "Mobile number must be 10 digits",
+                    });
+                  }
+                  field.onChange(val);
+                }}
                 label="Phone Number *"
                 variant="outline"
                 error={errors.phone_number?.message}
-              />
-            )}
-          />
-          <Controller
-            name="pincode"
-            control={control}
-            render={({ field }) => (
-              <Input
-                {...field}
-                type="number"
-                label="Pincode *"
-                variant="outline"
-                error={errors.pincode?.message}
-              />
-            )}
-          />
-          <Controller
-            name="country"
-            control={control}
-            render={({ field }) => (
-              <Select
-                {...field}
-                onChange={(selected) => field.onChange(selected.value)}
-                searchable
-                label="Country *"
-                options={countries_arr}
-                error={errors.state?.message}
               />
             )}
           />
@@ -166,6 +164,29 @@ export const AddressForm = ({ setModalState }) => {
             )}
           />
           <Controller
+            name="pincode"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                type="number"
+                label="Pincode *"
+                onChange={(evt) => {
+                  let val = evt?.target?.value?.trim();
+                  clearErrors("pincode");
+                  if (!/^\d{6}$/.test(val)) {
+                    setError("pincode", {
+                      message: "Pincode must be 6 digits",
+                    });
+                  }
+                  field.onChange(val);
+                }}
+                variant="outline"
+                error={errors.pincode?.message}
+              />
+            )}
+          />
+          <Controller
             name="landmark"
             control={control}
             render={({ field }) => (
@@ -175,13 +196,25 @@ export const AddressForm = ({ setModalState }) => {
           <Controller
             name="alternatePhone"
             control={control}
-            render={({ field }) => (
+            render={({ field, fieldState: { error } }) => (
               <Input
                 {...field}
                 type="number"
                 prefix="+91"
+                maxLength={10}
+                onChange={(evt) => {
+                  let val = evt?.target?.value?.trim();
+                  clearErrors("alternatePhone");
+                  if (!/^\d{10}$/.test(val)) {
+                    setError("alternatePhone", {
+                      message: "Mobile number must be 10 digits",
+                    });
+                  }
+                  field.onChange(val);
+                }}
                 label="Alternate Phone (Optional)"
                 variant="outline"
+                error={error?.message}
               />
             )}
           />
@@ -207,13 +240,27 @@ export const AddressForm = ({ setModalState }) => {
               </CheckboxGroup>
             )}
           />
+          {errors?.address_type?.message && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors?.address_type?.message}
+            </p>
+          )}
         </div>
-        <div className="mt-6 flex justify-between">
-          <Button type="submit" variant="solid">
-            Save
-          </Button>
-          <Button onClick={() => setModalState(false)} variant="outline">
+        <div className="w-full mt-6 flex justify-between">
+          <Button
+            className="min-w-[200px]"
+            onClick={closeModal}
+            variant="outline"
+          >
             Cancel
+          </Button>
+          <Button
+            isLoading={isPending}
+            className="min-w-[200px]"
+            type="submit"
+            variant="solid"
+          >
+            Save
           </Button>
         </div>
       </form>
