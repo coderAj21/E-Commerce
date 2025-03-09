@@ -6,10 +6,6 @@ require("dotenv").config();
 const router = require("./routes/routes");
 const express_fileupload = require("express-fileupload");
 const cookieParser = require("cookie-parser");
-const {
-  add_product_weight_in_database,
-  add_product_flavour_in_database,
-} = require("./models/ProductLogic");
 const PORT = process.env.PORT;
 
 app.use(

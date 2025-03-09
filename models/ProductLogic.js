@@ -212,6 +212,184 @@ async function get_all_images_from_database(product_id) {
   }
 }
 
+async function get_all_filter_product(
+  category_id,
+  brand_id,
+  minPrice,
+  maxPrice
+) {
+  try {
+    let query = `SELECT 
+    p.product_id,
+    p.product_name,
+    p.description,
+    JSON_OBJECT('unit_id', u.unit_id, 'value', u.value) AS unit,
+    JSON_OBJECT('brand_id', b.brand_id, 'value', b.brand_name) AS brand,
+    JSON_OBJECT('category_id', c.category_id, 'value', c.category_name) AS category,
+    JSON_ARRAYAGG(
+          JSON_OBJECT('product_flavour_id', pf.product_flavour_id, 'value', f.value)
+      ) AS flavours,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'product_weight_id', pw.product_weight_id,
+                'label', pw.label,
+                'original_price', round(pw.original_price, 2),
+                'final_price', round(pw.final_price, 2),
+                'discount', pw.discount,
+                'unit', JSON_OBJECT('unit_id', u.unit_id, 'value', u.value)
+            )
+        )
+        FROM products_weight AS pw
+		WHERE pw.product_id = p.product_id
+		AND (pw.final_price >= ? OR ? IS NULL)
+		AND (pw.final_price <= ? OR ? IS NULL)
+    ) AS weights,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'product_nutrition_id', pn.product_nutrition_id,
+                'nutrition_id', pn.nutrition_id,
+                'label', pn.label,
+                'value', pn.value,
+                'unit', JSON_OBJECT('unit_id', un.unit_id, 'value', un.value)
+            )
+        )
+        FROM product_nutritions AS pn
+        INNER JOIN unit AS un ON pn.unit_id = un.unit_id
+        WHERE pn.product_id = p.product_id
+    ) AS nutrition
+FROM 
+    products AS p
+INNER JOIN
+    category AS c ON p.category_id = c.category_id
+INNER JOIN
+    brand AS b ON p.brand_id = b.brand_id
+INNER JOIN 
+    products_flavours AS pf ON p.product_id = pf.product_id
+INNER JOIN 
+    flavours AS f ON pf.flavour_id = f.flavour_id
+INNER JOIN 
+    unit AS u ON p.unit_id = u.unit_id
+WHERE EXISTS (
+          SELECT 1 FROM products_weight AS pw
+          WHERE pw.product_id = p.product_id
+          AND (pw.final_price >= ? OR ? IS NULL)
+          AND (pw.final_price <= ? OR ? IS NULL)
+      )`;
+    const values = [
+      minPrice,
+      minPrice,
+      maxPrice,
+      maxPrice,
+      minPrice,
+      minPrice,
+      maxPrice,
+      maxPrice,
+    ];
+    if (category_id) {
+      query += " AND c.category_id = ?";
+      values.push(category_id);
+    }
+    if (brand_id) {
+      query += " AND b.brand_id = ?";
+      values.push(brand_id);
+    }
+    query += " GROUP BY p.product_id LIMIT 10";
+    let [result] = await sql.execute(query, values);
+    if (result.length > 0) {
+      return {
+        success: true,
+        data: result,
+      };
+    }
+    return {
+      success: false,
+      data: [],
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error,
+    };
+  }
+}
+
+async function get_product_from_database(product_id) {
+  try {
+    let [result] = await sql.query(
+      `SELECT 
+    p.product_id,
+    p.product_name,
+    p.description,
+    JSON_OBJECT('unit_id', u.unit_id, 'value', u.value) AS unit,
+    JSON_OBJECT('brand_id', b.brand_id, 'value', b.brand_name) AS brand,
+    JSON_OBJECT('category_id', c.category_id, 'value', c.category_name) AS category,
+    JSON_ARRAYAGG(
+          JSON_OBJECT('product_flavour_id', pf.product_flavour_id, 'value', f.value)
+      ) AS flavours,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'product_weight_id', pw.product_weight_id,
+                'label', pw.label,
+                'original_price', round(pw.original_price, 2),
+                'final_price', round(pw.final_price, 2),
+                'discount', pw.discount,
+                'unit', JSON_OBJECT('unit_id', u.unit_id, 'value', u.value)
+            )
+        )
+        FROM products_weight AS pw
+        WHERE pw.product_id = p.product_id
+    ) AS weights,
+    (
+        SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'product_nutrition_id', pn.product_nutrition_id,
+                'nutrition_id', pn.nutrition_id,
+                'label', pn.label,
+                'value', pn.value,
+                'unit', JSON_OBJECT('unit_id', un.unit_id, 'value', un.value)
+            )
+        )
+        FROM product_nutritions AS pn
+        INNER JOIN unit AS un ON pn.unit_id = un.unit_id
+        WHERE pn.product_id = p.product_id
+    ) AS nutrition
+FROM 
+    products AS p
+INNER JOIN
+    category AS c ON p.category_id = c.category_id
+INNER JOIN
+    brand AS b ON p.brand_id = b.brand_id
+INNER JOIN 
+    products_flavours AS pf ON p.product_id = pf.product_id
+INNER JOIN 
+    flavours AS f ON pf.flavour_id = f.flavour_id
+INNER JOIN 
+    unit AS u ON p.unit_id = u.unit_id
+GROUP BY 
+      p.product_id having p.product_id=?`
+    ,[product_id]);
+    if(result.length>0){
+      return {
+        success:true,
+        data:result[0],
+      }
+    }
+    return {
+      success:false,
+      datta:{}
+    }
+  } catch (error) {
+    return {
+      success:false,
+      data:{},
+      error:error
+    }
+  }
+}
+
 module.exports = {
   create_product_in_database,
   get_all_products_from_database,
@@ -219,4 +397,6 @@ module.exports = {
   add_product_weight_in_database,
   add_product_flavour_in_database,
   add_product_nutrition_in_database,
+  get_all_filter_product,
+  get_product_from_database,
 };

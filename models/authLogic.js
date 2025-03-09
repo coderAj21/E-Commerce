@@ -29,7 +29,7 @@ async function create_user_in_database(firstname, lastname, email, password) {
 async function find_user_from_database(email, user_id) {
   try {
     let [result] = await sql.query(
-      `select email,password,user_id from user where ${
+      `select first_name,last_name,email,password,user_id from user where ${
         email ? "email" : "user_id"
       }=?`,
       [email, user_id]

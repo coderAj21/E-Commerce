@@ -4,13 +4,15 @@ require("dotenv").config();
 
 exports.auth=async (req,res,next)=>{
     try{
-        let token=req.cookies.token;
-        if (!token){
+        let token = req.headers.authorization;
+        token = token.split(" ")[1];
+        if (!token) {
             return res.status(404).json({
-                success:false,
-                message:"Session timeout..."
-            })
+            success: false,
+            message: "Session timeout..."
+            });
         }
+        
         let payload=jwt.verify(token,process.env.JWT_SECRET);
         req.body.email=payload.email;
         next();

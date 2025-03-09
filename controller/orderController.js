@@ -29,28 +29,13 @@ exports.createOrder = async (req, res) => {
                 message: "Failed to create the order.",
             });
         }
-        const orderItemsResults = await Promise.all(
-            order_items.map((item) =>
-                create_order_items_in_the_database(
-                    order.data, // Assuming `order.data` contains the order ID
-                    item.product_id,
-                    item.quantity,
-                    item.price,
-                    item.total_price,
-                    item.flavour_id,
-                    item.weight_id
-                )
-            )
-        );
-        
-        const failedItems = orderItemsResults.find((result) => !result.success);
-        if (failedItems) {
-            return res.status(500).json({
-                success: false,
-                message: "Failed to create some order items.",
-            });
+        const order_item_response=await create_order_items_in_the_database(order?.data,order_items);
+        if(!order_item_response.success){
+            return res.status(200).json({
+                success:false,
+                message:"Order is Failed try again later..."
+            })
         }
-
         return res.status(201).json({
             success: true,
             message: "Order Created Successfully..",

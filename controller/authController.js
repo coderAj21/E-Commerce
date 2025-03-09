@@ -28,10 +28,12 @@ exports.login=async (req,res)=>{
                 message:"enter the correct password..."
             })
         }
-        let payload={
-            email: user.data[0].email,
-            user_id:user.data[0].user_id,
-        }
+        let payload = {
+          email: user?.data[0]?.email,
+          user_id: user?.data[0]?.user_id,
+          firstname: user?.data[0]?.first_name,
+          lastname: user?.data[0]?.last_name,
+        };
         let token=jwt.sign(payload,process.env.JWT_SECRET);
         return res.cookie("token",token,{
             httpOnly:true,

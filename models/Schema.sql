@@ -12,10 +12,12 @@ create table user(
 create table address(
     address_id int unsigned unique not null auto_increment,
     user_id int unsigned,
-    address_type enum ("office","home") not null default "home",
+    name varchar(255) not null,
+    address_type enum ("work","home") not null default "home",
     address_line_2 text not null,
     landmark varchar(255) not null,
     country varchar(100) not null,
+    state varchar(200) not null,
     city varchar(200) not null,
     pincode varchar(6) check (char_length(pincode)=6 and pincode REGEXP '^[0-9]+$'),
     phone_number varchar(10) check(char_length(phone_number)=10 and phone_number REGEXP '^[0-9]+$'),
@@ -45,6 +47,7 @@ create table sub_category (
   created_at timestamp default current_timestamp
 );
 
+-- Product
 create table products(
     product_id int unsigned primary key auto_increment,
     product_name text not null,
@@ -100,48 +103,7 @@ create table product_nutritions(
     foreign key (nutrition_id) references nutrition(nutrition_id)
     foreign key (unit_id) references unit(unit_id),
 );
-create table order_details(
-	order_id int unsigned primary key auto_increment,
-    user_id int unsigned,
-    total_amount int unsigned not null default 0,
-    order_status enum ("Pending","Processing","Shipped","Delivered") not null default "Pending",
-    payment_status enum ("Pending","Completed","Failed") not null default "Pending",
-    billing_address_id int unsigned,
-    shipping_address_id int unsigned,
-    created_at timestamp default current_timestamp,
-    updated_at timestamp,
-    foreign key (user_id) references user(user_id),
-    foreign key (shipping_address_id) references address(address_id)
-);
-create table order_items(
-	order_item_id int unsigned primary key auto_increment,
-    order_id int unsigned,
-    product_id int unsigned,
-    quantity int unsigned,
-    price int unsigned,
-    total_price int unsigned,
-    flavour_id int unsigned,
-    weight_id int unsigned,
-    created_at timestamp default current_timestamp,
-    foreign key (order_id) references order_details(order_id),
-    foreign key (product_id) references products (product_id),
-    foreign key (flavour_id) references products_flavours(product_flavour_id),
-    foreign key (weight_id) references products_weight(product_weight_id),
 
-);
-create table payment_details(
-		payment_id int unsigned primary key auto_increment,
-        order_id int unsigned,
-        user_id int unsigned,
-        payment_status enum ("Pending","Completed","Failed") not null default "Pending",
-        amount float unsigned,
-        currency varchar(20) not null,
-        transaction_id varchar (50) not null,
-        created_at timestamp default current_timestamp,
-        updated_at timestamp,
-        foreign key (order_id) references order_details(order_id),
-        foreign key (user_id) references user (user_id)
-);
 
 create table brand(
     brand_id  int unsigned primary key auto_increment,
@@ -175,4 +137,51 @@ create table nutrition (
     value varchar(255) not null unique,
     created_at timestamp default current_timestamp,
     updated_at timestamp
+);
+
+-- Order 
+
+create table order_details(
+	order_id int unsigned primary key auto_increment,
+    user_id int unsigned,
+    total_amount int unsigned not null default 0,
+    order_status enum ("Pending","Processing","Shipped","Delivered") not null default "Pending",
+    payment_status enum ("Pending","Completed","Failed") not null default "Pending",
+    billing_address_id int unsigned,
+    shipping_address_id int unsigned,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp,
+    foreign key (user_id) references user(user_id),
+    foreign key (shipping_address_id) references address(address_id)
+);
+
+create table order_items(
+	order_item_id int unsigned primary key auto_increment,
+    order_id int unsigned,
+    product_id int unsigned,
+    quantity int unsigned,
+    price int unsigned,
+    total_price int unsigned,
+    flavour_id int unsigned,
+    weight_id int unsigned,
+    created_at timestamp default current_timestamp,
+    foreign key (order_id) references order_details(order_id),
+    foreign key (product_id) references products (product_id),
+    foreign key (flavour_id) references products_flavours(product_flavour_id),
+    foreign key (weight_id) references products_weight(product_weight_id),
+
+);
+
+create table payment_details(
+    payment_id int unsigned primary key auto_increment,
+    order_id int unsigned,
+    user_id int unsigned,
+    payment_status enum ("Pending","Completed","Failed") not null default "Pending",
+    amount float unsigned,
+    currency varchar(20) not null,
+    transaction_id varchar (50) not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp,
+    foreign key (order_id) references order_details(order_id),
+    foreign key (user_id) references user (user_id)
 );
