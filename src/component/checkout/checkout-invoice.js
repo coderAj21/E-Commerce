@@ -37,9 +37,14 @@ const CheckoutInvoice = () => {
         <p>Delivery Charges</p>
         <p>₹{shipping}</p>
       </div>
-      <div className="w-full flex justify-between mt-4 border-t-2 py-1 border-black">
-        <p className="text-2xl font-semibold">Total Price</p>
+      <div className="w-full flex justify-between mt-4 border-t border-b py-2 border-black">
+        <p className="text-2xl font-medium">Total Price</p>
         <p className="text-2xl font-semibold">₹{total}</p>
+      </div>
+      <div className="w-full flex gap-2 justify-end ">
+        <p className="text-base text-green-700 font-medium">
+          Expected delivery: 2-3 days
+        </p>
       </div>
       <NavLink to={routes.checkout.index}>
         <Button

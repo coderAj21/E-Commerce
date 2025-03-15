@@ -20,7 +20,7 @@ function Carousel({images}){
             <Slider {...settings}>
                 {
                     images.map((val,idx)=>{
-                        return <img key={"img"+idx} src={val} alt="discount-slider"></img>
+                        return <img key={"img"+idx}  src={val} alt="discount-slider"></img>
                     })
                 }
             </Slider>

@@ -2,6 +2,7 @@
 import Carousel from "./Carousel";
 import ProductSlider from "../component/productSlider";
 import{useSelector} from "react-redux"
+import CustomLoader from "../component/custom-loader";
 
 
 let images=[
@@ -13,7 +14,9 @@ let images=[
 ]
 function Home (){
     let product_arr=useSelector((store)=>(store?.product?.data));
-    if(product_arr.length<1)return;
+    if(product_arr.length<1){
+        return <CustomLoader/>
+    };
     return (
         <div className="relative w-full">
             <Carousel images={images}/>

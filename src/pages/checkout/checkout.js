@@ -56,17 +56,15 @@ const Checkout = () => {
   }
   console.log(step);
   return (
-    <div className="w-full min-h-screen p-4 flex flex-col lg:flex-row gap-5 ">
-      <div className="min-w-[800px] w-full flex flex-col gap-5 ">
+    <div className="w-full min-h-screen p-4 flex flex-col lg:flex-row gap-5 max-sm:gap-10 ">
+      <div className="min-w-[375px] w-full flex flex-col gap-5 ">
         <Accordion defaultOpen={step.first} value={step.first} duration={400}>
-          <Accordion.Header className="flex gap-2 text-lg shadow-md p-2 px-4 rounded-md bg-gray-200">
-            <Button size="sm" >
-              1
-            </Button>
+          <Accordion.Header className="flex gap-2 text-lg shadow-md p-2 px-4  rounded-md bg-gray-200">
+            <Button size="sm">1</Button>
             <p>Login</p>
           </Accordion.Header>
           <Accordion.Body className="bg-gray-50 my-2">
-            <div className="w-11/12 mx-auto py-4 rounded-md grid grid-cols-2">
+            <div className="w-11/12 mx-auto py-4 rounded-md grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="w-full flex flex-col gap-2">
                 <div className="grid grid-cols-2 my-2 w-1/4 min-w-[300px]">
                   <p>Name</p>
@@ -93,7 +91,7 @@ const Checkout = () => {
                 </Button>
               </div>
               <div className="w-full flex flex-col gap-2">
-                <p>Advantage of secure login</p>
+                <p className="text-xl font-medium">Advantage of secure login</p>
                 <div className="flex gap-4 items-center min-w-[300px]">
                   <FaTruck />
                   <p>Easily Track Orders, Hassle free returns</p>
@@ -108,7 +106,7 @@ const Checkout = () => {
                 </div>
               </div>
             </div>
-            <p className="w-11/12 mx-auto my-2 text-gray-600">
+            <p className="w-full sm:w-11/12 mx-auto my-2 text-gray-600 max-sm:px-2">
               Please note that upon clicking "Logout" you will lose all items in
               cart and will be redirected to Flipkart home page.
             </p>
@@ -116,9 +114,7 @@ const Checkout = () => {
         </Accordion>
         <Accordion defaultOpen={step.second} duration={400}>
           <Accordion.Header className="flex gap-2 text-lg shadow-md p-2 px-4 rounded-md bg-gray-200">
-            <Button size="sm" >
-              2
-            </Button>
+            <Button size="sm">2</Button>
             <p>Delivery Address</p>
           </Accordion.Header>
           <Accordion.Body className="w-full">
@@ -140,7 +136,7 @@ const Checkout = () => {
               <RadioGroup
                 value={address}
                 setValue={setAddress}
-                className="flex flex-col gap-4 p-2 h-[400px] overflow-y-auto"
+                className="flex flex-col gap-4 p-2 max-h-[400px] overflow-y-auto"
               >
                 {address_arr.map((item, idx) => {
                   return (
@@ -164,7 +160,7 @@ const Checkout = () => {
             <p>Order Summary</p>
           </Accordion.Header>
           <Accordion.Body>
-            <div className="w-full h-[500px] overflow-y-auto py-4 ">
+            <div className="w-full max-h-[500px] overflow-y-auto py-4 ">
               {/* add items div */}
               {cart?.map((val, idx) => {
                 return <CartCard key={"cart-cart" + idx} obj={val} />;
@@ -173,14 +169,14 @@ const Checkout = () => {
           </Accordion.Body>
         </Accordion>
         <Accordion>
-          <Accordion.Header className="flex gap-2 text-lg shadow-md p-2 px-4 rounded-md border">
-            <p>Order confirmation email will be sent to </p>
+          <Accordion.Header className="flex flex-col gap-1 sm:flex-row text-lg shadow-md p-2 px-4 rounded-md border-2">
+            <p className="font-medium">Order confirmation email will be sent to </p>
             <p className="font-medium underline text-blue-600">{user?.email}</p>
           </Accordion.Header>
           <Accordion.Body></Accordion.Body>
         </Accordion>
       </div>
-      <div className="min-w-[350px] h-full shadow-md">
+      <div className="min-w-[350px] h-full shadow-md border rounded-lg">
         <CheckoutInvoice />
       </div>
     </div>

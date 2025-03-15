@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaRegHeart } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -6,9 +5,9 @@ import { addItemToCart } from "../../redux/slices/cartSlice";
 import { addItemToWishlist } from "../../redux/slices/wishlistSlice";
 import { Button, Tooltip } from "rizzui";
 import toast from "react-hot-toast";
+import { BASE_URL } from "../../config/api-services";
 
 function ProductCard({ data }) {
-  let url = process.env.REACT_APP_BACKEND_URL;
   let dispatch = useDispatch();
 
   function cartHandler() {
@@ -40,8 +39,10 @@ function ProductCard({ data }) {
     return toast.success("Added to Wishlist");
   }
   return (
-    <div className={`flex flex-col w-[280px] shadow-md border rounded-md`}>
-      <div className="flex h-7 items-center justify-end mr-4 mt-2">
+    <div
+      className={`flex flex-col w-[200px] sm:w-[280px] max-sm:ml-3 shadow-md rounded-md border`}
+    >
+      <div className="w-full flex h-7 items-center justify-end mt-1 sm:mt-2 sm:mr-4">
         <Tooltip content="Add to Wishlist">
           <Button onClick={wishlistHandler} variant="text">
             <FaRegHeart className="text-2xl" />
@@ -49,20 +50,20 @@ function ProductCard({ data }) {
         </Tooltip>
       </div>
       <NavLink to={`/product/${data?.product_id}`} target="_blank">
-        <div className={`w-full h-[185px] p-3 object-contain`}>
+        <div className={`w-full h-[185px] p-2 sm:p-3 object-contain`}>
           <img
             className="w-full h-full rounded-md"
-            src={`${url}/${data?.images[0].value}`}
+            src={`${BASE_URL}/${data?.images[0].value}`}
             alt="product-image"
           ></img>
         </div>
-        <div className="w-full px-4 ">
+        <div className="w-full px-2 sm:px-4 ">
           <Tooltip rounded="pill" color="info" content={data?.product_name}>
-            <p className="my-1">
-              {data?.product_name.substring(0, 25) + "..."}
+            <p className="my-1 text-sm sm:text-base truncate ">
+              {data?.product_name}
             </p>
           </Tooltip>
-          <div className="w-full flex items-center justify-start gap-x-2 ">
+          <div className="w-full flex items-center justify-start gap-x-2 text-sm sm:text-base">
             <span className="font-bold">₹ {data?.weights[0]?.final_price}</span>
             <span className="line-through text-zinc-500">
               ₹ {data?.weights[0]?.original_price}
@@ -74,12 +75,12 @@ function ProductCard({ data }) {
         </div>
       </NavLink>
 
-      <div className="w-full px-4 py-4">
+      <div className="w-full px-2 py-2 sm:p-4 ">
         <Button
           variant="outline"
           onClick={cartHandler}
-          className="w-full rounded-md bg-yellow-300 text-black text-base font-semibold p-1 hover:bg-yellow-400 transition duration-150 ease-in
-              "
+          className={`w-full rounded-md bg-yellow-300 text-black text-base font-semibold
+                    sm:p-1 hover:bg-yellow-400 transition duration-150 ease-in`}
         >
           Add to Cart
         </Button>

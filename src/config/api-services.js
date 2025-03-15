@@ -21,7 +21,8 @@ const APISERVICES = {
   image: createApiFunction("image"),
 };
 
-export const BASE_URL = "http://localhost:5051";
+export const BASE_URL = "http://52.66.245.10:5051";
+// export const BASE_URL = "http://192.168.1.11:5051";
 export const VERSION = "v1";
 export const apiUrl = `${BASE_URL}/api/${VERSION}/`;
 

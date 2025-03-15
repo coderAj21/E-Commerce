@@ -8,6 +8,7 @@ import {
 import { Button } from "rizzui";
 import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa6";
+import { BASE_URL } from "../../config/api-services";
 
 const CartCard = ({ obj }) => {
   let dispatch = useDispatch();
@@ -22,16 +23,16 @@ const CartCard = ({ obj }) => {
   }
   return (
     <div className="w-full p-4 flex flex-col gap-x-2 shadow-md border mb-4">
-      <div className="w-full flex items-start gap-10">
+      <div className="w-full flex items-start gap-5 sm:gap-10 ">
         <div className="min-w-[120px] w-2/12">
           <img
-            src={`http://localhost:5051/${obj?.images[0]?.value}`}
+            src={`${BASE_URL}/${obj?.images[0]?.value}`}
             className="w-full object-cover rounded "
             alt="cart_card_image "
           ></img>
         </div>
-        <div className="-mt-2 min-w-[400px] w-full ">
-          <p className="text-lg font-medium">{obj?.product_name}</p>
+        <div className="-mt-2 min-w-[200px]  w-full ">
+          <p className="sm:text-lg font-medium">{obj?.product_name}</p>
           <div className="flex gap-2 my-1 text-gray-700 text-base ">
             <p>
               Weight: {obj?.weight?.label}
@@ -41,26 +42,24 @@ const CartCard = ({ obj }) => {
           </div>
           <p className="font-medium">Brand: {obj?.brand?.value} </p>
           <div className="flex gap-3 my-1 items-center">
-            <p className="line-through text-gray-600 text-xl">
-              ₹{Math.round(obj?.weight?.original_price * obj?.quantity*100)/100}
+            <p className="line-through text-gray-600 text-lg sm:text-xl">
+              ₹
+              {Math.round(obj?.weight?.original_price * obj?.quantity * 100) /
+                100}
             </p>
-            <p className="text-3xl font-bold">
+            <p className="text-xl sm:text-2xl  font-bold">
               ₹
               {Math.round(obj?.weight?.final_price * obj?.quantity * 100) / 100}
             </p>
-            <p className="text-2xl text-green-600 font-bold">
+            <p className="text-lg sm:text-xl text-green-600 font-medium">
               {" "}
               {obj?.weight?.discount}% off
             </p>
           </div>
         </div>
-        <div className="-mt-2 min-w-[200px] w-full ">
-          <p className="text-xl font-medium">Delivery in 2-3 Days</p>
-          <p className="text-green-600 font-medium text-lg">Free</p>
-        </div>
       </div>
-      <div className="w-full mt-2 flex items-center gap-4 ">
-        <div className="min-w-[100px]  w-2/12 gap-x-2 flex items-center select-none">
+      <div className="w-full sm:mt-2 flex items-center gap-2 ">
+        <div className="min-w-[130px] sm:min-w-[150px] w-2/12 gap-x-2 flex items-center select-none">
           <Button
             onClick={decreaseQuantiy}
             variant="solid"
@@ -70,7 +69,7 @@ const CartCard = ({ obj }) => {
           >
             <FaMinus className="size-6" />
           </Button>
-          <p className="border-2 border-black px-5 text-xl text-center font-semibold">
+          <p className="border-2 border-black px-3 sm:px-5 text-xl text-center font-semibold">
             {obj?.quantity}
           </p>
           <Button
@@ -86,7 +85,7 @@ const CartCard = ({ obj }) => {
         <Button
           onClick={removeHandler}
           variant="text"
-          className="p-0 text-xl text-red-600 hover:text-red-500 underline"
+          className="p-0 text-xl text-red-600 hover:text-red-500 underline sm:-mt-2"
         >
           Remove
         </Button>

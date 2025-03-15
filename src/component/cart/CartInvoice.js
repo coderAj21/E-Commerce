@@ -3,8 +3,10 @@ import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Button } from "rizzui";
 import { routes } from "../../config/routes";
+import { useAuth } from "../../hooks/useAuth";
 
 const CartInvoice = () => {
+  const { user } = useAuth();
   let cartData = useSelector((store) => store?.cart.data);
   const sub_total =
     cartData?.reduce(
@@ -20,6 +22,8 @@ const CartInvoice = () => {
     ) || 0;
 
   const shipping = 0;
+
+  console.log(user);
 
   const total = +(sub_total - discount).toFixed(2);
   return (
@@ -37,11 +41,20 @@ const CartInvoice = () => {
         <p>Delivery Charges</p>
         <p>₹{shipping}</p>
       </div>
-      <div className="w-full flex justify-between mt-4 border-t-2 py-1 border-black">
-        <p className="text-2xl font-semibold">Total Price</p>
+      <div className="w-full flex justify-between mt-4 border-t border-b py-2 border-black">
+        <p className="text-2xl font-medium">Total Price</p>
         <p className="text-2xl font-semibold">₹{total}</p>
       </div>
-      <NavLink to={routes.checkout.index}>
+      <div className="w-full flex gap-2 justify-end ">
+        <p className="text-base text-green-700 font-medium">
+          Expected delivery: 2-3 days
+        </p>
+      </div>
+      <NavLink
+        to={
+          user ? routes.checkout.index : `${routes.auth.login}?isCheckout=true`
+        }
+      >
         <Button
           variant="outline"
           className="w-full rounded-md bg-yellow-300 text-black font-semibold p-3

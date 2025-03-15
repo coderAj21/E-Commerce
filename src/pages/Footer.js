@@ -12,9 +12,9 @@ const Footer = () => {
   }, [dispatch]);
 
   return (
-    <div className="w-full h-full  mt-10 bg-black">
+    <div className="w-full h-full max-sm:px-2  mt-10 bg-black">
       <div className="container flex flex-col gap-y-2">
-        <div className="w-full h-full my-2 text-white flex flex-wrap justify-between items-start ">
+        <div className="w-full h-full my-2 text-white grid grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 gap-5 ">
           <div>
             <p className="font-bold my-2">MAYA</p>
             <ul className="text-zinc-300 cursor-pointer">
@@ -30,9 +30,9 @@ const Footer = () => {
           <div>
             <p className="font-bold my-2">Brands</p>
             <ul className="text-zinc-300 cursor-pointer">
-              {taxonomy?.data?.brand?.map((item,idx) => {
+              {taxonomy?.data?.brand?.map((item, idx) => {
                 return (
-                  <li key={"brand"+idx}>
+                  <li key={"brand" + idx}>
                     <NavLink
                       to={routes.filter.listing({ brand_id: item?.brand_id })}
                       target="_blank"
@@ -53,7 +53,7 @@ const Footer = () => {
               <li>Ayurveda</li>
             </ul>
           </div>
-          <div>
+          <div className="w-[200px]">
             <p className="font-bold my-2">Quick Links</p>
             <ul className="text-zinc-300 cursor-pointer">
               <li>My Account</li>
@@ -62,9 +62,9 @@ const Footer = () => {
               <li>FAQs</li>
             </ul>
           </div>
-          <div>
+          <div className="w-[200px]">
             <p className="font-bold my-2">Contact Us</p>
-            <ul className="text-zinc-300 cursor-pointer">
+            <ul className="w-full text-zinc-300 cursor-pointer">
               <li>care@maya.com</li>
               <li>+91 9717443134</li>
               <li>Sec 91 Faridabad Haryana</li>

@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import APISERVICES from "../config/api-services";
 
 
-let url=process.env.REACT_APP_BACKEND_URL;
 
 const useProduct=()=>{
     let dispatch=useDispatch();
