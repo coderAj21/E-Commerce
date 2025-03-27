@@ -29,10 +29,7 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-          export PATH="$NVM_DIR/versions/node/$(nvm current)/bin:$PATH"
-        
+          source ~/.bashrc
           node -v  # Debugging
           npm -v
           pm2 -v
