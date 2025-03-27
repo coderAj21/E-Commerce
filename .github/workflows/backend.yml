@@ -32,10 +32,6 @@ jobs:
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           export PATH="$NVM_DIR/versions/node/$(nvm current)/bin:$PATH"
-        
-          node -v  # Debugging
-          npm -v
-          pm2 -v
           cd backend || exit 1  
           git pull origin backend  
           npm install  
