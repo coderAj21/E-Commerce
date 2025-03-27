@@ -31,6 +31,7 @@ jobs:
           ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
           cd backend || exit 1  # Ensure the directory exists
           git pull origin backend  # Pull the latest changes
+          node -v
           npm install
           npm run build
           pm2 restart ecosystem.config.js
