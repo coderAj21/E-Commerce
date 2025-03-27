@@ -1,23 +1,12 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Deploy Node.js Backend
 
 on:
   push:
-    branches: [ "backend" ]
-  pull_request:
-    branches: [ "backend" ]
-
+    branches:
+      - backend
 jobs:
-  build:
-
+  deploy:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
       - name: Checkout Code
@@ -26,21 +15,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20  # Change based on your version
+          node-version: 22 # Change based on your version
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Run setup commands on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
+          cd backend
+          npm install  # Install dependencies on the server
+          npm run build  # Build the project on the server
+          pm2 restart ecosystem.config.js  # Restart using PM2
+          EOF
 
-
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd backend
-            pm2 stop all
-            git pull origin backend
-            npm install
-            pm2 restart all
