@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - backend
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -15,7 +16,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22 # Change based on your version
+          node-version: 20  # Use an LTS version
+
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
 
       - name: Run setup commands on EC2
         env:
@@ -23,9 +29,9 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
-          cd backend
-          npm install  # Install dependencies on the server
-          npm run build  # Build the project on the server
-          pm2 restart ecosystem.config.js  # Restart using PM2
+          cd backend || exit 1  # Ensure the directory exists
+          git pull origin backend  # Pull the latest changes
+          npm install
+          npm run build
+          pm2 restart ecosystem.config.js
           EOF
-
