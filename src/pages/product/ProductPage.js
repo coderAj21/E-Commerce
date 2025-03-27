@@ -1,8 +1,8 @@
-import {useState } from "react";
+import { useState } from "react";
 import Slider from "react-slick";
 import { IoCart } from "react-icons/io5";
-import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import { addItemToCart } from "../../redux/slices/cartSlice";
 import { addItemToWishlist } from "../../redux/slices/wishlistSlice";
 import CustomLoader from "../../component/custom-loader";
@@ -10,7 +10,7 @@ import { Button } from "rizzui";
 import NutritionFacts from "../../component/product/NutritionFacts";
 import { useQuery } from "@tanstack/react-query";
 import APISERVICES, { BASE_URL } from "../../config/api-services";
-
+import { routes } from "../../config/routes";
 
 function ProductPage() {
   const { idx } = useParams();
@@ -22,13 +22,30 @@ function ProductPage() {
     slidesToScroll: 1,
     nextArrow: <Arrow />,
     prevArrow: <Arrow />,
+    responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 2,
+          initialSlide: 2,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+    ],
     afterChange: (index) => {
-      // console.log(index);
       setImageIndex(index);
     },
   };
+  let cart = useSelector((store) => store?.cart)?.map;
 
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   let [imageIndex, setImageIndex] = useState(1);
   const [product, setProduct] = useState({
@@ -41,11 +58,11 @@ function ProductPage() {
   });
 
   function addToCart() {
-    let obj = { ...data, quantity: 1 };
+    let obj = { ...product, quantity: 1 };
     dispatch(addItemToCart(obj));
   }
   function addToWishlist() {
-    let obj = { ...data };
+    let obj = { ...product };
     dispatch(addItemToWishlist(obj));
   }
 
@@ -62,6 +79,7 @@ function ProductPage() {
             category: res?.data?.category,
             flavour: res?.data?.flavours[0],
             weight: res?.data?.weights[0],
+            images: res?.data?.images,
           });
         }
         return res?.data || {};
@@ -74,7 +92,6 @@ function ProductPage() {
   if (apiLoading) {
     return <CustomLoader />;
   }
-
 
   return (
     <div className="w-full my-4 flex flex-col">
@@ -142,30 +159,9 @@ function ProductPage() {
                 <span className="">Inclusive of all taxes</span>
               </p>
             </div>
-            {/* Buttons  */}
-            <div className="w-full flex  flex-wrap gap-x-4">
-              <Button
-                variant="outline"
-                onClick={addToWishlist}
-                className="w-fit rounded-md bg-zinc-700 text-white font-semibold p-1 px-4
-                            hover:text-white transition duration-150 ease-in"
-              >
-                Add to Wishlist
-              </Button>
-              <Button
-                variant="outline"
-                onClick={addToCart}
-                className="w-fit flex items-center rounded-md bg-yellow-300 text-black font-semibold p-1 px-3
-                            hover:bg-yellow-400 transition duration-150 ease-in"
-              >
-                <span className="text-2xl px-2">
-                  <IoCart />
-                </span>
-                <span>Add to Cart</span>
-              </Button>
-            </div>
+
             {/* weight and  flavour div */}
-            <div className="w-full flex flex-col mt-10">
+            <div className="w-full flex flex-col">
               {/* weight  */}
               <div className="w-full flex flex-col">
                 <p className="text-2xl font-semibold">Weight</p>
@@ -191,7 +187,7 @@ function ProductPage() {
                 </div>
               </div>
               {/* Flavour */}
-              <div className="w-full flex flex-col mt-6">
+              <div className="w-full flex flex-col mt-4">
                 <p className="text-2xl font-semibold">Flavours</p>
                 <div className="w-full flex flex-wrap gap-3 my-3 cursor-pointer">
                   {data?.flavours?.map((flavour, idx) => {
@@ -214,6 +210,39 @@ function ProductPage() {
                   })}
                 </div>
               </div>
+            </div>
+            {/* Buttons  */}
+            <div className="w-full flex flex-wrap gap-x-4 mt-10">
+              <Button
+                variant="outline"
+                onClick={addToWishlist}
+                className="w-fit rounded-md bg-zinc-700 text-white font-semibold p-1 px-4
+                            hover:text-white transition duration-150 ease-in"
+              >
+                Add to Wishlist
+              </Button>
+              {data?.product_id in cart ? (
+                <Link to={routes?.cart?.listing}>
+                  <Button variant="solid" className="w-fit flex items-center">
+                    <span className="text-2xl px-2">
+                      <IoCart />
+                    </span>
+                    <span>Go to Cart</span>
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  variant="outline"
+                  onClick={addToCart}
+                  className="w-fit flex items-center rounded-md bg-yellow-300 text-black font-semibold p-1 px-3
+                            hover:bg-yellow-400 transition duration-150 ease-in"
+                >
+                  <span className="text-2xl px-2">
+                    <IoCart />
+                  </span>
+                  <span>Add to Cart</span>
+                </Button>
+              )}
             </div>
           </div>
           <div className="max-w-xl mx-auto">

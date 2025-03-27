@@ -1,14 +1,16 @@
 import { FaRegHeart } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, NavLink } from "react-router-dom";
 import { addItemToCart } from "../../redux/slices/cartSlice";
 import { addItemToWishlist } from "../../redux/slices/wishlistSlice";
 import { Button, Tooltip } from "rizzui";
 import toast from "react-hot-toast";
 import { BASE_URL } from "../../config/api-services";
+import { routes } from "../../config/routes";
 
 function ProductCard({ data }) {
   let dispatch = useDispatch();
+  let cart = useSelector((store) => store?.cart)?.map;
 
   function cartHandler() {
     let obj = {
@@ -76,14 +78,22 @@ function ProductCard({ data }) {
       </NavLink>
 
       <div className="w-full px-2 py-2 sm:p-4 ">
-        <Button
-          variant="outline"
-          onClick={cartHandler}
-          className={`w-full rounded-md bg-yellow-300 text-black text-base font-semibold
+        {data?.product_id in cart ? (
+          <Link to={routes?.cart?.listing}>
+            <Button variant="solid" className="w-full">
+              Go to Cart
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            variant="outline"
+            onClick={cartHandler}
+            className={`w-full rounded-md bg-yellow-300 text-black text-base font-semibold
                     sm:p-1 hover:bg-yellow-400 transition duration-150 ease-in`}
-        >
-          Add to Cart
-        </Button>
+          >
+            Add to Cart
+          </Button>
+        )}
       </div>
     </div>
   );

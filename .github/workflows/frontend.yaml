@@ -1,31 +1,69 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Deploy Frontend Build 
+name: Deploy Frontend Build to AWS EC2
 
 on:
   push:
-    branches: [ "frontend" ]
-  pull_request:
-    branches: [ "frontend" ]
+    branches:
+      - frontend
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20 # Using Node.js v20.11.1
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: build # Upload only the build folder
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: success() # Run deploy only if build was successful
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download built artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: frontend-build
+          path: build # Download the build folder
+
+      - name: Add SSH key
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY_FRONTEND }}
+        run: |
+          echo "$EC2_SSH_KEY" > key.pem
+          chmod 600 key.pem
+
+      - name: Copy build files via SSH to EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST_FRONTEND }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          scp -i key.pem -o StrictHostKeyChecking=no -r build "$EC2_USER@$EC2_HOST:/frontend"
+
+      - name: Run setup commands on EC2
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST_FRONTEND }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
+          cd frontend
+          pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+          EOF
