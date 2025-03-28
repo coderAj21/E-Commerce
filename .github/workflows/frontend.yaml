@@ -54,7 +54,7 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           DEPLOY_PATH: ${{ secrets.EC2_DEPLOY_PATH || 'frontend' }}
         run: |
-          scp -i key.pem -o StrictHostKeyChecking=no -r build "$EC2_USER@$EC2_HOST:/frontend"
+          scp -i key.pem -o StrictHostKeyChecking=no -r build "$EC2_USER@$EC2_HOST:frontend"
 
       - name: Restart server on EC2
         env:
