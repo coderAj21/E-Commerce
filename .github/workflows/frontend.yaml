@@ -15,10 +15,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # Use latest 20.x version
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
+        run: npm i # Using ci for more reliable installs
 
       - name: Build the project
         run: npm run build
@@ -27,22 +27,19 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: frontend-build
-          path: build # Upload only the build folder
+          path: build
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: success() # Run deploy only if build was successful
+    if: success()
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
       - name: Download built artifact
         uses: actions/download-artifact@v3
         with:
           name: frontend-build
-          path: build # Download the build folder
+          path: build
 
       - name: Add SSH key
         env:
@@ -55,6 +52,7 @@ jobs:
         env:
           EC2_HOST: ${{ secrets.EC2_HOST_FRONTEND }}
           EC2_USER: ${{ secrets.EC2_USER }}
+          DEPLOY_PATH: ${{ secrets.EC2_DEPLOY_PATH || 'frontend' }}
         run: |
           scp -i key.pem -o StrictHostKeyChecking=no -r build "$EC2_USER@$EC2_HOST:/frontend"
 
@@ -64,15 +62,11 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
           ssh -i key.pem -o StrictHostKeyChecking=no "$EC2_USER@$EC2_HOST" << 'EOF'
-          cd /var/www/frontend
+          cd frontend
           # Ensure correct permissions
           sudo chown -R $USER:$USER build
           sudo chmod -R 755 build
           
           # Restart PM2 process
-          if pm2 list | grep -q "ecosystem.config.js"; then
-            pm2 restart ecosystem.config.js
-          else
-            pm2 start ecosystem.config.js
-          fi
+          pm2 restart ecosystem.config.js
           EOF
