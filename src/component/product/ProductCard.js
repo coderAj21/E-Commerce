@@ -42,7 +42,7 @@ function ProductCard({ data }) {
   }
   return (
     <div
-      className={`flex flex-col w-[200px] sm:w-[280px] max-sm:ml-3 shadow-md rounded-md border`}
+      className={`flex flex-col w-[185px] sm:w-[280px] max-sm:ml-3 shadow-md rounded-md border`}
     >
       <div className="w-full flex h-7 items-center justify-end mt-1 sm:mt-2 sm:mr-4">
         <Tooltip content="Add to Wishlist">
@@ -52,7 +52,7 @@ function ProductCard({ data }) {
         </Tooltip>
       </div>
       <NavLink to={`/product/${data?.product_id}`} target="_blank">
-        <div className={`w-full h-[185px] p-2 sm:p-3 object-contain`}>
+        <div className={`w-full h-[150px]  sm:h-[185px] p-2 sm:p-3 object-contain`}>
           <img
             className="w-full h-full rounded-md"
             src={`${BASE_URL}/${data?.images[0].value}`}

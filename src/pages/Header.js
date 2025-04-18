@@ -25,13 +25,12 @@ function Header() {
   }
 
   useEffect(() => {}, [user]);
-  // isMobile=useM
 
   return (
     <div className="relative w-full h-fit">
       {/* wlecome bar */}
-      <div className="w-full bg-black text-white">
-        <div className="container flex justify-between items-center py-1">
+      <div className="w-full bg-black text-white ">
+        <div className="container flex justify-between items-center p-1">
           <p className="font-sans text-sm sm:text-lg">
             Welcome to MAYA Online Supplement Store
           </p>

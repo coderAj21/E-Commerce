@@ -33,7 +33,7 @@ const CartCard = ({ obj }) => {
         </div>
         <div className="-mt-2 min-w-[200px]  w-full ">
           <p className="sm:text-lg font-medium">{obj?.product_name}</p>
-          <div className="flex gap-2 my-1 text-gray-700 text-base ">
+          <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 my-1 text-gray-700 text-sm sm:text-base ">
             <p>
               Weight: {obj?.weight?.label}
               {obj?.weight?.unit?.value},
@@ -41,17 +41,17 @@ const CartCard = ({ obj }) => {
             <p>Flavour: {obj?.flavour?.value}</p>
           </div>
           <p className="font-medium">Brand: {obj?.brand?.value} </p>
-          <div className="flex gap-3 my-1 items-center">
-            <p className="line-through text-gray-600 text-lg sm:text-xl">
+          <div className="flex gap-x-2 my-1 items-center">
+            <p className="line-through text-gray-600  sm:text-xl">
               ₹
               {Math.round(obj?.weight?.original_price * obj?.quantity * 100) /
                 100}
             </p>
-            <p className="text-xl sm:text-2xl  font-bold">
+            <p className=" sm:text-xl  font-bold">
               ₹
               {Math.round(obj?.weight?.final_price * obj?.quantity * 100) / 100}
             </p>
-            <p className="text-lg sm:text-xl text-green-600 font-medium">
+            <p className="sm:text-xl text-green-600 font-medium">
               {" "}
               {obj?.weight?.discount}% off
             </p>
@@ -85,7 +85,7 @@ const CartCard = ({ obj }) => {
         <Button
           onClick={removeHandler}
           variant="text"
-          className="p-0 text-xl text-red-600 hover:text-red-500 underline sm:-mt-2"
+          className="p-0 text-lg sm:text-xl text-red-600 hover:text-red-500 underline ml-0.5 sm:-mt-2"
         >
           Remove
         </Button>
